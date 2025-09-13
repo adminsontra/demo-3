@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>GIÁO DỤC AN TOÀN - BẢO MẬT THÔNG TIN</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+    <!-- Be Vietnam Pro (giữ nguyên nếu trang khác dùng) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- THÊM: Merriweather + Noto Serif để đồng bộ font serif toàn site -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Noto+Serif:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      crossorigin="anonymous"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+      rel="stylesheet"
+    />
+
+    <!-- Main CSS -->
+    <link href="camket.css" rel="stylesheet" />
+    <link href="camket2.css" rel="stylesheet" />
+
+    <!-- Fallback + Đồng bộ font -->
+    <style>
+      /* ===== Đồng bộ font toàn site về Merriweather/Noto Serif ===== */
+      :root {
+        --site-serif: "Merriweather", "Noto Serif", Georgia, serif;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: var(--site-serif);
+      }
+      /* Bảo đảm form controls kế thừa font */
+      input,
+      button,
+      select,
+      textarea {
+        font-family: inherit;
+      }
+      /* Layout fallback giữ footer dính đáy */
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .site-main {
+        flex: 1 0 auto;
+      }
+      .footer {
+        background: linear-gradient(90deg, #0f3f29, #145a39);
+        color: #fff;
+      }
+      /* Lưu ý: Font Awesome tự đặt font cho .fa, không bị ảnh hưởng */
+    </style>
+  </head>
+  <body>
+    <!-- ===== Phone Action Modal ===== -->
+    <div class="modal-backdrop" id="phoneActionModal" hidden aria-hidden="true">
+      <div
+        class="modal modal--tech"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pamTitle"
+      >
+        <button class="modal__close" type="button" aria-label="Đóng" data-close>
+          &times;
+        </button>
+        <h3 class="modal__title" id="pamTitle">Chọn thao tác</h3>
+        <div class="modal__actions">
+          <button class="btn btn-primary" id="pamCallBtn" type="button">
+            <i class="fa-solid fa-phone"></i> Gọi điện
+          </button>
+          <button class="btn btn-outline" id="pamCopyBtn" type="button">
+            <i class="fa-regular fa-copy"></i> Sao chép
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Topbar ===== -->
+    <div class="topbar">
+      <div class="container topbar__wrap">
+        <div class="topbar__left">
+          <i class="fa-regular fa-clock"></i>
+          <span id="clockText">--:-- | --</span>
+        </div>
+        <div class="topbar__right">
+          <a class="topbar__link" href="#" id="hotlineLink">
+            <i class="fa-solid fa-phone"></i>
+            Hotline:
+            <span id="hotlineNumber" data-phone="02438357975"
+              >024 38357975</span
+            >
+          </a>
+          <a class="topbar__link" href="contact.html">
+            <i class="fa-solid fa-paper-plane"></i> Liên hệ
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Header (dual logos) ===== -->
+    <header class="brand brand--bg">
+      <div class="container brand__wrap brand__wrap--logo-dual">
+        <div class="brand__logo brand__logo--left">
+          <img
+            alt="Logo trái"
+            class="bg-white-fix brand__logo--left brand__logo-img brand__logo"
+            src="logo-left.png"
+          />
+        </div>
+        <div class="brand__text">
+          <h1>GIÁO DỤC <span>AN TOÀN - BẢO MẬT </span> THÔNG TIN</h1>
+          <p>Chuyển đổi số • An ninh mạng</p>
+        </div>
+        <div class="brand__logo brand__logo--right">
+          <img
+            alt="Logo phải"
+            class="bg-white-fix brand__logo--right brand__logo-img brand__logo"
+            src="logo-right.png"
+          />
+        </div>
+      </div>
+    </header>
+
+    <!-- Nav holder -->
+    <div class="nav-holder">
+      <nav aria-label="Điều hướng chính" class="navbar">
+        <div class="container nav__row">
+          <button
+            aria-controls="primaryMenu"
+            aria-expanded="false"
+            class="nav__toggle"
+            id="menuToggle"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <ul class="menu" id="primaryMenu" role="menubar">
+            <span aria-hidden="true" class="indicator"></span>
+            <li class="menu__item">
+              <a
+                aria-label="Trang chủ"
+                class="menu-link menu-link--icon"
+                href="index.html"
+                role="menuitem"
+              >
+                <i aria-hidden="true" class="fa-solid fa-house"></i>
+              </a>
+            </li>
+            <li class="menu__item has-submenu" role="none">
+              <a
+                aria-expanded="false"
+                aria-haspopup="true"
+                class="menu-link"
+                href="#"
+                role="menuitem"
+              >
+                <span>Tổng quan</span>
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down caret"
+                ></i>
+              </a>
+              <div class="submenu">
+                <a href="tintuc.html">Tin tức</a>
+              </div>
+            </li>
+            <li class="menu__item has-submenu" role="none">
+              <a
+                aria-expanded="false"
+                aria-haspopup="true"
+                class="menu-link"
+                href="#"
+                role="menuitem"
+              >
+                <span>Đạo đức - Pháp luật</span>
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down caret"
+                ></i>
+              </a>
+              <div class="submenu">
+                <a href="DD-VH.html">Đạo đức - VH số</a>
+                <a href="PL.html">Pháp luật</a>
+              </div>
+            </li>
+            <li class="menu__item has-submenu" role="none">
+              <a
+                aria-expanded="false"
+                aria-haspopup="true"
+                class="menu-link"
+                href="#"
+                role="menuitem"
+              >
+                <span>Dự án</span>
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down caret"
+                ></i>
+              </a>
+              <div class="submenu">
+                <a href="../CLB/index.html">CLB</a>
+                <a href="../HĐTT/index.html">Hoạt động trải nghiệm</a>
+              </div>
+            </li>
+            <li class="menu__item" role="none">
+              <a class="menu-link" href="khaosat.html" role="menuitem"
+                ><span>Khảo sát</span></a
+              >
+            </li>
+            <li class="menu__item" role="none">
+              <a class="menu-link" href="camket.html" role="menuitem"
+                ><span>Cam kết</span></a
+              >
+            </li>
+          </ul>
+
+          <div class="nav__actions">
+            <button class="btn-primary btn-pill" id="openSearchBtn">
+              <i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- ===== MAIN ===== -->
+    <main class="ck-page site-main" data-ck-scope>
+      <section class="ck container">
+        <!-- ===== Left controls ===== -->
+        <div class="ck__left">
+          <h2 class="ck__heading">Cam kết công dân số văn minh</h2>
+
+          <label class="ck__label">
+            Họ và tên
+            <input class="ck__input" id="ckHoten" placeholder="Nguyễn Văn A" />
+          </label>
+
+          <div class="ck__grid2">
+            <label class="ck__label">
+              Lớp
+              <input class="ck__input" id="ckLop" placeholder=".../..." />
+            </label>
+            <label class="ck__label">
+              Ngày sinh
+              <input
+                class="ck__input"
+                id="ckNgaysinh"
+                placeholder="... / ... / ...."
+              />
+            </label>
+          </div>
+
+          <label class="ck__check">
+            <input id="ckDongY" type="checkbox" />
+            <span>Tôi đã đọc và hiểu nội dung trang này.</span>
+          </label>
+
+          <!-- Chữ ký HS -->
+          <div class="ck__group">
+            <div class="group__title">Chữ ký</div>
+            <div class="ck__grid">
+              <button class="btn btn--ghost" id="ckOpenPad" type="button">
+                ✍️ Chữ ký điện tử
+              </button>
+
+              <label class="btn btn--ghost">
+                📤 Upload chữ ký
+                <input accept="image/*" hidden id="ckUpload" type="file" />
+              </label>
+
+              <button class="btn btn--mini" id="sigClearHS" type="button">
+                🗑️ Xóa chữ ký
+              </button>
+              <button class="btn btn--mini" id="fitToggle" type="button">
+                Vừa khung
+              </button>
+            </div>
+
+            <div class="ck__sigsize">
+              <span>Size:</span>
+              <div class="ck__sigsize-ctrl">
+                <button
+                  aria-label="Giảm"
+                  class="btn btn--mini"
+                  id="sigMinus"
+                  type="button"
+                >
+                  −
+                </button>
+                <input
+                  id="sigRange"
+                  max="800"
+                  min="40"
+                  type="range"
+                  value="100"
+                />
+                <button
+                  aria-label="Tăng"
+                  class="btn btn--mini"
+                  id="sigPlus"
+                  type="button"
+                >
+                  +
+                </button>
+                <span class="ck__pct" id="sigPct">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chữ ký GV -->
+          <div class="ck__group">
+            <div class="group__title">Chữ ký GV</div>
+            <div class="ck__grid">
+              <label class="btn btn--ghost">
+                📤 Upload chữ ký
+                <input accept="image/*" hidden id="ckUploadGV" type="file" />
+              </label>
+              <button class="btn btn--mini" id="sigClearGV" type="button">
+                🗑️ Xóa chữ ký
+              </button>
+            </div>
+          </div>
+
+          <!-- Logo -->
+          <div class="ck__group">
+            <div class="group__title">Logo</div>
+            <div class="ck__logoctrl">
+              <label class="btn btn--ghost">
+                🏫 Upload logo trường
+                <input accept="image/*" hidden id="logoUpload" type="file" />
+              </label>
+              <button class="btn btn--mini" id="logoRemove" type="button">
+                Bỏ logo
+              </button>
+              <label class="ck__switch">
+                <input checked id="logoToggle" type="checkbox" />
+                <span>Hiện logo</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="ck__actions">
+            <button
+              class="btn btn--primary"
+              disabled
+              id="ckPrint"
+              type="button"
+            >
+              🖨️ In cam kết
+            </button>
+            <button class="btn btn--outline" id="ckDownload" type="button">
+              ⬇️ Tải ảnh cam kết
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== Right preview (A4) ===== -->
+        <div class="ck__right">
+          <div
+            aria-label="Phiếu cam kết xem trước"
+            class="paper paper--cert paper--a4"
+            id="ckPaper"
+          >
+            <div class="paper__brand"><img alt="Logo trường" id="pLogo" /></div>
+
+            <!-- ======= Quốc hiệu – tiêu ngữ (chỉ hiện khi in) ======= -->
+            <section class="gov only-print" aria-hidden="true">
+              <div class="gov__meta">
+                <div class="gov__left">
+                  <div class="gov__org">TRƯỜNG THPT SƠN TRÀ</div>
+                  <div class="gov__code">Số: ...... / ......</div>
+                </div>
+                <div class="gov__right">
+                  <div class="gov__nation">
+                    CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+                  </div>
+                  <div class="gov__motto">Độc lập - Tự do - Hạnh phúc</div>
+                  <div class="gov__line"></div>
+                </div>
+              </div>
+            </section>
+            <header class="paper__head">
+              <div class="paper__title">
+                <h3>CAM KẾT CÔNG DÂN SỐ VĂN MINH</h3>
+                <div aria-hidden="true" class="paper__ornament">✦ ✧ ✦</div>
+                <p>
+                  Điền tên và đánh dấu đã đọc. Nhấn “In cam kết” để lưu/nộp cho
+                  GVCN.
+                </p>
+
+                <div class="kv">
+                  <span>Họ và tên:</span
+                  ><span id="pHoten">..................................</span>
+                </div>
+                <div class="kv kv--2">
+                  <div><span>Lớp:</span><span id="pLop">.../...</span></div>
+                  <div>
+                    <span>Ngày sinh:</span
+                    ><span id="pNgaysinh">... / ... / ...</span>
+                  </div>
+                </div>
+
+                <div class="ack" id="ackLine">
+                  <span class="ack__label">Đã đọc:</span>
+                  <span class="ack__status" id="pCheck">Chưa đánh dấu</span>
+                </div>
+                <div class="ack ack--full" id="ackFull" hidden>
+                  “Tôi đã đọc và hiểu nội dung trang này”.
+                </div>
+              </div>
+
+              <aside class="paper__rules">
+                <h4>
+                  <span class="only-screen">Chế độ xem trước</span><br />PHIẾU
+                  CAM KẾT
+                </h4>
+                <ul>
+                  <li>Tôn trọng, không xúc phạm, không bắt nạt trên mạng.</li>
+                  <li>
+                    Bảo vệ tài khoản, dữ liệu; không chia sẻ mã OTP/mật khẩu.
+                  </li>
+                  <li>
+                    Kiểm chứng thông tin, trích nguồn và tôn trọng bản quyền.
+                  </li>
+                  <li>
+                    Báo cáo nội dung độc hại cho thầy cô/nhà trường/nền tảng.
+                  </li>
+                </ul>
+                <div class="paper__date" id="pNgayViet">
+                  Ngày … tháng … năm …
+                </div>
+
+                <div class="paper__signs">
+                  <div class="sig">
+                    <div class="sig__label">Ký tên HS</div>
+                    <div
+                      aria-label="Chữ ký học sinh"
+                      class="sig__img"
+                      id="pSig"
+                    ></div>
+                  </div>
+                  <div class="sig">
+                    <div class="sig__label">Ký tên GV</div>
+                    <div
+                      aria-label="Chữ ký giáo viên"
+                      class="sig__img"
+                      id="pSigGV"
+                    ></div>
+                  </div>
+                </div>
+              </aside>
+            </header>
+
+            <!-- ======= Footer số trang (chỉ hiện khi in) ======= -->
+            <footer class="print-footer only-print" aria-hidden="true">
+              <span class="page-no"></span>
+            </footer>
+
+            <div class="paper__note">
+              * Phiếu sẽ in/ghi ảnh đúng như khung xem trước.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Signature Modal (Popup) — skin TECH giống hotline ===== -->
+    <div class="modal-backdrop" id="sigTechModal" hidden aria-hidden="true">
+      <div
+        class="modal modal--tech modal--sig"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sigTitle"
+      >
+        <button class="modal__close" type="button" aria-label="Đóng" data-close>
+          &times;
+        </button>
+        <h3 class="modal__title" id="sigTitle">Ký trực tiếp (HS)</h3>
+
+        <div class="modal__canvaswrap">
+          <canvas id="ckCanvas" width="1000" height="320"></canvas>
+        </div>
+
+        <div class="modal__hint">
+          Gợi ý: Dùng chuột/trackpad (di động: dùng ngón tay)
+        </div>
+
+        <div class="modal__actions">
+          <button class="btn btn-outline" id="ckClear" type="button">
+            Xoá chữ ký
+          </button>
+          <button class="btn btn-primary" id="ckUse" type="button">
+            Áp dụng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <footer class="footer" role="contentinfo">
+      <div class="container footer__wrap">
+        <div class="footer__left">
+          <a
+            href="https://www.google.com/maps/place/36FQ%2B6C7,+L%C3%AA+V%C4%83n+Qu%C3%BD,+An+H%E1%BA%A3i+B%E1%BA%AFc,+S%C6%A1n+Tr%C3%A0,+%C4%90%C3%A0+N%E1%BA%B5ng+550000"
+            target="_blank"
+            rel="noopener"
+            class="footer__icon"
+            aria-label="Mở bản đồ trường"
+          >
+            <!-- Icon ngôi trường -->
+            <svg
+              class="icon-school"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 64 64"
+              aria-hidden="true"
+            >
+              <path
+                d="M8 28 L32 10 L56 28"
+                stroke="#fff"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linejoin="round"
+              />
+              <rect
+                x="14"
+                y="28"
+                width="36"
+                height="26"
+                rx="2"
+                fill="#fff"
+                opacity="0.95"
+              />
+              <rect
+                x="28"
+                y="38"
+                width="8"
+                height="16"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <rect
+                x="18"
+                y="32"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <rect
+                x="18"
+                y="42"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <rect
+                x="40"
+                y="32"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <rect
+                x="40"
+                y="42"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <circle
+                cx="32"
+                cy="24"
+                r="5"
+                fill="none"
+                stroke="#fff"
+                stroke-width="2"
+              />
+              <path
+                d="M32 24 L32 22 M32 24 L34 24"
+                stroke="#fff"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </a>
+          <span class="footer__addr"
+            >Lê Văn Quý, Phường An Hải, TP Đà Nẵng</span
+          >
+        </div>
+
+        <div class="footer__right">
+          <small style="font-size: 15.5px"
+            >© 2025 Trường THPT Sơn Trà | GIÁO DỤC AN TOÀN - BẢO MẬT THÔNG
+            TIN</small
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===== Super Search ===== -->
+    <div class="ss-backdrop" id="superSearch" hidden aria-hidden="true">
+      <div
+        class="ss"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ss-title"
+      >
+        <div class="ss__head">
+          <h3 id="ss-title">Tìm kiếm toàn site</h3>
+          <button class="ss__close" type="button" aria-label="Đóng">
+            &times;
+          </button>
+        </div>
+
+        <div class="ss__inputwrap">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input
+            id="ss-input"
+            class="ss__input"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Gõ để tìm… (Ctrl/⌘+K)"
+            aria-label="Ô tìm kiếm"
+          />
+          <span class="ss__kbdhint"
+            ><kbd>/</kbd> • <kbd>Ctrl</kbd>+<kbd>K</kbd></span
+          >
+        </div>
+
+        <div class="ss__meta">
+          <span id="ss-count">0 kết quả</span>
+          <span id="ss-status" class="ss__status">Đang sẵn sàng…</span>
+        </div>
+
+        <div class="ss__progress" id="ss-progress" aria-hidden="true">
+          <div class="ss__bar" id="ss-bar" style="width: 0%"></div>
+          <div class="ss__progress-text" id="ss-progress-text"></div>
+        </div>
+
+        <div
+          class="ss__results"
+          id="ss-results"
+          role="listbox"
+          aria-label="Kết quả tìm kiếm"
+        ></div>
+
+        <div class="ss__footer">
+          <div class="ss__hintline">
+            <span>
+              <kbd>↑</kbd><kbd>↓</kbd> chọn • <kbd>Enter</kbd> mở •
+              <kbd>Shift</kbd>+<kbd>Enter</kbd> mở tab mới • <kbd>Esc</kbd> Đóng
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button
+      id="backToTop"
+      class="fab-top"
+      aria-label="Lên đầu trang"
+      title="Lên đầu trang"
+    >
+      <span class="fab-top__shadow" aria-hidden="true"></span>
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+    <!-- ===== Scripts ===== -->
+    <script defer src="camket.js"></script>
+    <script defer src="camket2.js"></script>
+  </body>
+</html>

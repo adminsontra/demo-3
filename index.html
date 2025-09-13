@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="CLB" />
+    <base href="HĐTT" />
+    <base href="Thư viện ảnh trực tuyến" />
+    <base href="child" />
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>GIÁO DỤC AN TOÀN - BẢO MẬT THÔNG TIN</title>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      crossorigin="anonymous"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+      rel="stylesheet"
+    />
+    <link href="index.css" rel="stylesheet" />
+
+    <!-- Fallback rất nhỏ: đảm bảo footer dính đáy nếu CSS ngoài chưa cập nhật -->
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .site-main {
+        flex: 1 0 auto;
+      }
+      .footer {
+        background: linear-gradient(90deg, #0f3f29, #145a39);
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Phone Action Modal -->
+    <div class="modal-backdrop" id="phoneActionModal" hidden aria-hidden="true">
+      <div
+        class="modal modal--tech"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pamTitle"
+      >
+        <button class="modal__close" type="button" aria-label="Đóng" data-close>
+          &times;
+        </button>
+        <h3 class="modal__title" id="pamTitle">Chọn thao tác</h3>
+        <div class="modal__actions">
+          <button class="btn btn-primary" id="pamCallBtn" type="button">
+            <i class="fa-solid fa-phone"></i> Gọi điện
+          </button>
+          <button class="btn btn-outline" id="pamCopyBtn" type="button">
+            <i class="fa-regular fa-copy"></i> Sao chép
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="container topbar__wrap">
+        <div class="topbar__left">
+          <i class="fa-regular fa-clock"></i>
+          <span id="clockText">--:-- | --</span>
+        </div>
+        <div class="topbar__right">
+          <a class="topbar__link" href="#" id="hotlineLink">
+            <i class="fa-solid fa-phone"></i>
+            Hotline:
+            <span id="hotlineNumber" data-phone="02438357975"
+              >024 38357975</span
+            >
+          </a>
+          <a class="topbar__link" href="contact.html"
+            ><i class="fa-solid fa-paper-plane"></i> Liên hệ</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Header with dual logos -->
+    <header class="brand brand--bg">
+      <div class="container brand__wrap brand__wrap--logo-dual">
+        <div class="brand__logo brand__logo--left">
+          <img
+            alt="Logo trái"
+            class="bg-white-fix brand__logo--left brand__logo-img brand__logo"
+            src="logo-left.png"
+          />
+        </div>
+        <div class="brand__text">
+          <h1>GIÁO DỤC <span>AN TOÀN - BẢO MẬT </span> THÔNG TIN</h1>
+          <p>Chuyển đổi số • An ninh mạng</p>
+        </div>
+        <div class="brand__logo brand__logo--right">
+          <img
+            alt="Logo phải"
+            class="bg-white-fix brand__logo--right brand__logo-img brand__logo"
+            src="logo-right.png"
+          />
+        </div>
+      </div>
+    </header>
+
+    <!-- Nav holder -->
+    <div class="nav-holder">
+      <nav aria-label="Điều hướng chính" class="navbar">
+        <div class="container nav__row">
+          <button
+            aria-controls="primaryMenu"
+            aria-expanded="false"
+            class="nav__toggle"
+            id="menuToggle"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <ul class="menu" id="primaryMenu" role="menubar">
+            <span aria-hidden="true" class="indicator"></span>
+            <li class="menu__item">
+              <a
+                aria-label="Trang chủ"
+                class="menu-link menu-link--icon"
+                href="index.html"
+                role="menuitem"
+              >
+                <i aria-hidden="true" class="fa-solid fa-house"></i>
+              </a>
+            </li>
+            <li class="menu__item has-submenu" role="none">
+              <a
+                aria-expanded="false"
+                aria-haspopup="true"
+                class="menu-link"
+                href="#"
+                role="menuitem"
+              >
+                <span>Tổng quan</span>
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down caret"
+                ></i>
+              </a>
+              <div class="submenu">
+                <a href="./child/tintuc.html">Tin tức</a>
+              </div>
+            </li>
+            <li class="menu__item has-submenu" role="none">
+              <a
+                aria-expanded="false"
+                aria-haspopup="true"
+                class="menu-link"
+                href="#"
+                role="menuitem"
+              >
+                <span>Đạo đức - Pháp luật</span>
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down caret"
+                ></i>
+              </a>
+              <div class="submenu">
+                <a href="./child/DD-VH.html">Đạo đức - VH số</a>
+                <a href="./child/PL.html">Pháp luật</a>
+              </div>
+            </li>
+            <li class="menu__item has-submenu" role="none">
+              <a
+                aria-expanded="false"
+                aria-haspopup="true"
+                class="menu-link"
+                href="#"
+                role="menuitem"
+              >
+                <span>Dự án</span>
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down caret"
+                ></i>
+              </a>
+              <div class="submenu">
+                <a href="./CLB/index.html">CLB</a>
+                <a href="./HĐTT/index.html">Hoạt động trải nghiệm</a>
+              </div>
+            </li>
+            <li class="menu__item" role="none">
+              <a class="menu-link" href="./child/khaosat.html" role="menuitem"
+                ><span>Khảo sát</span></a
+              >
+            </li>
+            <li class="menu__item" role="none">
+              <a class="menu-link" href="./child/camket.html" role="menuitem"
+                ><span>Cam kết</span></a
+              >
+            </li>
+          </ul>
+
+          <div class="nav__actions">
+            <button class="btn-primary btn-pill" id="openSearchBtn">
+              <i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="site-main">
+      <!-- Hero -->
+      <section class="home-main container">
+        <div class="hm-grid">
+          <!-- 1) Nội dung tin tức: auto slide, lấy từ news.json -->
+          <div
+            aria-label="Nội dung tin tức"
+            class="hm-news-feature"
+            id="hmNewsFeature"
+          >
+            <div class="hm-nf-track" id="hmNfTrack">
+              <!-- card items will be injected by JS -->
+            </div>
+            <div aria-hidden="true" class="hm-nf-dots" id="hmNfDots"></div>
+          </div>
+          <!-- 2) Các trang tin khác: danh sách title, bấm để sang trang tin tức -->
+          <aside aria-label="Các trang tin khác" class="hm-news-list">
+            <h3 class="hm-box-title">Các trang tin khác</h3>
+            <ul class="hm-nl-ul" id="hmNewsList">
+              <!-- items by JS -->
+            </ul>
+          </aside>
+          <!-- 3) Video: tự động chuyển video tiếp theo (playlist cục bộ) -->
+          <div aria-label="Video" class="hm-video">
+            <h3 class="hm-box-title">Video</h3>
+            <video
+              class="hm-video-el"
+              style="height: 80%"
+              id="hmVideo"
+              controls
+              playsinline
+              preload="auto"
+            ></video>
+            <div class="hm-video-caption" id="hmVideoCaption">
+              Nội dung của video
+            </div>
+          </div>
+        </div>
+        <!-- 4) Thư viện ảnh trực tuyến -->
+        <section
+          aria-label="Thư viện ảnh trực tuyến"
+          class="hm-gallery"
+          id="galOnline"
+        >
+          <h3 class="hm-g-title">Thư viện ảnh trực tuyến</h3>
+          <div class="hm-g-viewport">
+            <div class="hm-g-track"></div>
+          </div>
+        </section>
+        <!-- 5) Thư viện ảnh hoạt động trải nghiệm -->
+        <section
+          aria-label="Thư viện ảnh hoạt động trải nghiệm"
+          class="hm-gallery"
+          id="galHDTT"
+        >
+          <h3 class="hm-g-title">Thư viện ảnh hoạt động trải nghiệm</h3>
+          <div class="hm-g-viewport">
+            <div class="hm-g-track"></div>
+          </div>
+        </section>
+        <!-- 6) Thư viện ảnh CLB -->
+        <section aria-label="Thư viện ảnh CLB" class="hm-gallery" id="galCLB">
+          <h3 class="hm-g-title">Thư viện ảnh CLB</h3>
+          <div class="hm-g-viewport">
+            <div class="hm-g-track"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+      <div class="container footer__wrap">
+        <!-- Bên trái: Icon + địa chỉ -->
+        <div class="footer__left">
+          <a
+            href="https://www.google.com/maps/place/36FQ%2B6C7,+L%C3%AA+V%C4%83n+Qu%C3%BD,+An+H%E1%BA%A3i+B%E1%BA%AFc,+S%C6%A1n+Tr%C3%A0,+%C4%90%C3%A0+N%E1%BA%B5ng+550000"
+            target="_blank"
+            rel="noopener"
+            class="footer__icon"
+            aria-label="Mở bản đồ trường"
+          >
+            <!-- Icon ngôi trường (SVG chi tiết) -->
+            <svg
+              class="icon-school"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 64 64"
+              aria-hidden="true"
+            >
+              <!-- mái nhà -->
+              <path
+                d="M8 28 L32 10 L56 28"
+                stroke="#fff"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linejoin="round"
+              />
+              <!-- tường -->
+              <rect
+                x="14"
+                y="28"
+                width="36"
+                height="26"
+                rx="2"
+                fill="#fff"
+                opacity="0.95"
+              />
+              <!-- cửa chính -->
+              <rect
+                x="28"
+                y="38"
+                width="8"
+                height="16"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <!-- cửa sổ trái -->
+              <rect
+                x="18"
+                y="32"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <rect
+                x="18"
+                y="42"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <!-- cửa sổ phải -->
+              <rect
+                x="40"
+                y="32"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <rect
+                x="40"
+                y="42"
+                width="6"
+                height="6"
+                fill="#145a39"
+                stroke="#fff"
+                stroke-width="1.5"
+              />
+              <!-- đồng hồ -->
+              <circle
+                cx="32"
+                cy="24"
+                r="5"
+                fill="none"
+                stroke="#fff"
+                stroke-width="2"
+              />
+              <path
+                d="M32 24 L32 22 M32 24 L34 24"
+                stroke="#fff"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </a>
+          <span class="footer__addr">
+            Lê Văn Quý, Phường An Hải, TP Đà Nẵng
+          </span>
+        </div>
+
+        <!-- Bên phải: Bản quyền -->
+        <div class="footer__right">
+          <small style="font-size: 15.5px"
+            >© 2025 Trường THPT Sơn Trà | GIÁO DỤC AN TOÀN - BẢO MẬT THÔNG
+            TIN</small
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- Super Search: VIP PRO -->
+    <div class="ss-backdrop" id="superSearch" hidden aria-hidden="true">
+      <div
+        class="ss"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ss-title"
+      >
+        <div class="ss__head">
+          <h3
+            id="ss-title"
+            style="font-family: Merriweather, Noto Serif, Georgia, serif"
+          >
+            Tìm kiếm toàn site
+          </h3>
+          <button class="ss__close" type="button" aria-label="Đóng">
+            &times;
+          </button>
+        </div>
+
+        <div class="ss__inputwrap">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input
+            style="font-family: Merriweather, Noto Serif, Georgia, serif"
+            id="ss-input"
+            class="ss__input"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Gõ để tìm… (Ctrl/⌘+K)"
+            aria-label="Ô tìm kiếm"
+          />
+          <span class="ss__kbdhint"
+            ><kbd>/</kbd> • <kbd>Ctrl</kbd>+<kbd>K</kbd></span
+          >
+        </div>
+
+        <div class="ss__meta">
+          <span id="ss-count">0 kết quả</span>
+          <span id="ss-status" class="ss__status">Đang sẵn sàng…</span>
+        </div>
+
+        <div class="ss__progress" id="ss-progress" aria-hidden="true">
+          <div class="ss__bar" id="ss-bar" style="width: 0%"></div>
+          <div class="ss__progress-text" id="ss-progress-text"></div>
+        </div>
+
+        <div
+          class="ss__results"
+          id="ss-results"
+          role="listbox"
+          aria-label="Kết quả tìm kiếm"
+        ></div>
+
+        <div class="ss__footer">
+          <div class="ss__hintline">
+            <span style="font-family: Merriweather, Noto Serif, Georgia, serif"
+              ><kbd>↑</kbd><kbd>↓</kbd> chọn • <kbd>Enter</kbd> mở •
+              <kbd>Shift</kbd>+<kbd>Enter</kbd> mở tab mới • <kbd>Esc</kbd> Đóng
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      id="backToTop"
+      class="fab-top"
+      aria-label="Lên đầu trang"
+      title="Lên đầu trang"
+    >
+      <span class="fab-top__shadow" aria-hidden="true"></span>
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script defer src="index.js"></script>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const id = new URLSearchParams(location.search).get("id");
+      if (!id) return;
+      const target = document.querySelector(`[data-news-id="${id}"], #${id}`);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  </script>
+</html>

@@ -1,0 +1,1757 @@
+/* =========================================================
+   TIN TỨC — CLEAN THEME
+   - Brand dual-logo header (không co/mất trên laptop)
+   - Sticky topbar + navbar
+   - Super Search + Modal + Footer
+   ========================================================= */
+
+/* =============== 1) VARIABLES & BASE ==================== */
+:root {
+  --brand: #1a7f4c;
+  --brand-2: #34c759;
+  --ink: #0b1324;
+  --muted: #5f6b87;
+
+  --bg: #fffcf4; /* ivory base */
+  --bg-soft: #fff; /* companion */
+  --glass: rgba(255, 255, 255, 0.9);
+
+  --radius: 20px;
+  --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+
+  --topbar-h: 44px;
+  --logo-size: 140px; /* dual-logo size */
+}
+@media (max-width: 1024px) {
+  :root {
+    --logo-size: 116px;
+  }
+}
+@media (max-width: 640px) {
+  :root {
+    --logo-size: 92px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+}
+body {
+  font-family: "Merriweather", "Noto Serif", Georgia, serif;
+  color: var(--ink);
+  background: radial-gradient(
+      900px 340px at 0% 0%,
+      rgba(26, 127, 76, 0.06),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 340px at 100% 0%,
+      rgba(52, 199, 89, 0.07),
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--bg), #fff 70%);
+}
+.container {
+  max-width: 1220px;
+  margin-inline: auto;
+  padding: 0 16px;
+}
+
+/* Buttons */
+.btn-primary {
+  display: inline-block;
+  border: 0;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+}
+.btn-pill {
+  border-radius: 999px;
+  padding: 10px 16px;
+}
+
+/* =============== 2) TOPBAR ============================== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(90deg, #0f3f29, #145a39);
+  color: #e6ffef;
+}
+.topbar__wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--topbar-h);
+}
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.topbar__link {
+  color: #e6ffef;
+  text-decoration: none;
+  font-weight: 600;
+  opacity: 0.95;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: 0.25s;
+}
+.topbar__link:hover {
+  opacity: 1;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+/* =============== 3) BRAND HEADER (Dual Logo) ============ */
+.brand {
+  position: relative;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-image: url("Banner.png");
+  background-size: cover; /* phủ kín header */
+  background-position: center; /* canh giữa */
+  background-repeat: no-repeat; /* không lặp lại */
+}
+
+.brand__wrap.brand__wrap--logo-dual {
+  width: 100%;
+  max-width: 1220px;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding: 0 12px;
+}
+
+/* Logo frame (DIV) */
+.brand__logo {
+  position: relative;
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08));
+  isolation: isolate;
+}
+/* Logo image (IMG) */
+.brand__logo-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: transparent;
+  border: 0;
+  mix-blend-mode: normal; /* tránh mất logo trên nền sáng */
+}
+
+/* Glow + sweep (nhẹ, không ảnh hưởng layout) */
+.brand__logo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.7), 0 0 24px rgba(52, 199, 89, 0.6),
+    0 0 48px rgba(26, 127, 76, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 1;
+  animation: logoPulse 3.5s ease-in-out infinite;
+}
+.brand__logo::after {
+  content: "";
+  position: absolute;
+  inset: -40% -30%;
+  border-radius: 50%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  filter: blur(12px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 2;
+  animation: logoSweep 2.8s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+@keyframes logoSweep {
+  0% {
+    transform: translateX(-120%) rotate(15deg);
+  }
+  50% {
+    transform: translateX(0) rotate(15deg);
+  }
+  100% {
+    transform: translateX(120%) rotate(15deg);
+  }
+}
+
+.brand__text {
+  flex: 1;
+  text-align: center;
+  padding: 0 8px;
+  font-weight: 7000;
+}
+.brand__text h1 {
+  margin: 0;
+  font-size: clamp(22px, 5vw, 36px);
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.brand__text h1 span {
+  color: var(--brand);
+}
+.brand__text p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+@media (max-width: 1024px) {
+  .brand__text h1 {
+    font-size: clamp(20px, 5vw, 30px);
+  }
+}
+@media (max-width: 640px) {
+  .brand__text h1 {
+    font-size: clamp(18px, 5vw, 24px);
+  }
+  .brand__text p {
+    font-size: 12px;
+  }
+}
+
+/* =============== 4) NAVBAR (Sticky dưới Topbar) ========= */
+.nav-holder {
+  position: sticky;
+  top: var(--topbar-h);
+  z-index: 90;
+  padding: 16px 0 24px;
+  background: transparent;
+}
+.navbar {
+  position: relative;
+  background: var(--glass);
+  border-radius: 28px;
+  box-shadow: 0 3px 14px rgba(16, 24, 40, 0.08);
+  backdrop-filter: saturate(1.2) blur(12px);
+  transition: box-shadow 0.25s ease, transform 0.18s ease;
+}
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -10px;
+  height: 22px;
+  border-radius: 999px;
+  filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 100% at 50% 0%,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0)
+  );
+  transition: opacity 0.25s;
+}
+.navbar:hover::after,
+.navbar:focus-within::after {
+  opacity: 0.9;
+}
+
+.nav__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 64px;
+  padding: 6px 10px;
+}
+
+/* Menu rail */
+.menu {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.menu::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 8px rgba(16, 24, 40, 0.06);
+  pointer-events: none;
+}
+
+/* Links */
+.menu__item {
+  position: relative;
+}
+.menu-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.9);
+  transition: transform 0.12s, box-shadow 0.12s, background-color 0.12s;
+}
+.menu-link:hover {
+  background: #fff;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+.menu-link .caret {
+  font-size: 12px;
+  opacity: 0.9;
+  transition: transform 0.2s;
+}
+.menu__item.hover-open > .menu-link .caret,
+.menu__item.pinned-open > .menu-link .caret {
+  transform: rotate(180deg);
+}
+.menu__item.is-active > .menu-link {
+  color: #0b2e1f;
+}
+
+/* Submenu */
+.submenu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 12px);
+  min-width: 260px;
+  background: linear-gradient(180deg, #fff, #fcfcfc);
+  border-radius: 18px;
+  border: 1px solid rgba(26, 127, 76, 0.08);
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.12);
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+  will-change: opacity, transform;
+}
+.submenu a {
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #0f172a;
+  font-weight: 600;
+}
+.submenu a:hover {
+  background: #eef7f1;
+}
+.menu__item.hover-open > .submenu,
+.menu__item.pinned-open > .submenu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Mega (2 cột) nếu dùng */
+.submenu.mega {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-width: 520px;
+}
+.mega__col h4 {
+  margin: 4px 0 8px;
+  font-size: 14px;
+  color: #0b2e1f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile menu */
+.nav__toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  font-size: 22px;
+  cursor: pointer;
+}
+@media (max-width: 1024px) {
+  .nav__toggle {
+    display: block;
+  }
+  .menu {
+    position: fixed;
+    inset: auto 0 0 0;
+    top: calc(var(--topbar-h) + 64px);
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 30px rgba(16, 24, 40, 0.2);
+    padding: 12px 16px 20px;
+    display: grid;
+    gap: 6px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+  .menu.open {
+    max-height: 70vh;
+  }
+  .menu::before {
+    display: none;
+  }
+  .submenu {
+    position: static;
+    box-shadow: none;
+    border: 1px dashed rgba(15, 23, 42, 0.08);
+    border-radius: 12px;
+    padding: 8px;
+    margin: 6px 0;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    display: none;
+  }
+  .menu__item.open > .submenu {
+    display: grid;
+  }
+}
+.menu__item:not(.has-submenu) .caret {
+  display: none;
+}
+
+/* Icon-only home pill */
+.menu-link--icon {
+  width: 44px;
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+.menu-link--icon i {
+  font-size: 18px;
+}
+
+/* =============== 5) HERO (tuỳ trang) ==================== */
+.hero {
+  position: relative;
+  padding: 64px 0 80px;
+  background: linear-gradient(180deg, #fff, #fff);
+}
+.hero:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+      60deg,
+      rgba(15, 23, 42, 0.03),
+      rgba(15, 23, 42, 0.03) 1px,
+      transparent 1px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      -60deg,
+      rgba(15, 23, 42, 0.025),
+      rgba(15, 23, 42, 0.025) 1px,
+      transparent 1px,
+      transparent 10px
+    );
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+}
+
+/* =============== 6) MODAL =============================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 6, 12, 0.55);
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal {
+  width: min(92vw, 420px);
+  background: #0b2e1f;
+  color: #e6ffef;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  padding: 18px 16px 16px;
+  transform: translateY(12px) scale(0.98);
+  transition: transform 0.2s ease;
+}
+.modal-backdrop.show .modal {
+  transform: translateY(0) scale(1);
+}
+.modal__title {
+  margin: 0 36px 6px 0;
+  font-size: 18px;
+  line-height: 1.35;
+}
+.modal__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #e6ffef;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 32px;
+  transition: background 0.2s, transform 0.15s;
+}
+.modal__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+.modal__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.2s, background 0.2s,
+    border-color 0.2s;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-outline {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #e6ffef;
+}
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* =============== 7) SUPER SEARCH ======================== */
+:root {
+  --ss-radius: 16px;
+  --ss-shadow: 0 24px 80px rgba(2, 6, 12, 0.35);
+  --ss-glass: rgba(255, 255, 255, 0.92);
+  --ss-ink: #0b1324;
+  --ss-muted: #5f6b87;
+}
+.ss-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 6, 12, 0.55);
+  z-index: 3000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.ss-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.ss {
+  width: min(96vw, 780px);
+  max-height: 84vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--ss-glass);
+  backdrop-filter: saturate(1.2) blur(10px);
+  border-radius: var(--ss-radius);
+  box-shadow: var(--ss-shadow);
+  padding: 14px;
+}
+.ss__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ss__head h3 {
+  margin: 0;
+  font: 800 16px "Be Vietnam Pro", system-ui, sans-serif;
+  color: var(--ss-ink);
+}
+.ss__close {
+  background: transparent;
+  border: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--ss-ink);
+  opacity: 0.75;
+}
+.ss__close:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.ss__inputwrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  padding: 8px 10px;
+  background: #fff;
+}
+.ss__input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  font: 600 16px/1.2 "Be Vietnam Pro", system-ui, sans-serif;
+  color: var(--ss-ink);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.ss__input::placeholder {
+  color: #94a3b8;
+}
+.ss__input:hover {
+  border-color: var(--brand-2);
+  background: #f0fff5;
+  box-shadow: 0 0 10px rgba(52, 199, 89, 0.6);
+}
+.ss__input:focus {
+  border-color: var(--brand);
+  background: #eafff0;
+  box-shadow: 0 0 12px rgba(26, 127, 76, 0.8);
+}
+
+.ss__kbdhint {
+  font: 700 11px/1 monospace;
+  color: #64748b;
+  display: flex;
+  gap: 6px;
+}
+.ss__kbdhint kbd {
+  font: 700 11px/1 monospace;
+  background: #eef2f7;
+  border-radius: 6px;
+  padding: 4px 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.ss__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ss-muted);
+  font-weight: 700;
+  font-size: 12px;
+  margin: 2px 2px 0;
+}
+.ss__status {
+  opacity: 0.9;
+}
+
+.ss__progress {
+  position: relative;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 6px 2px 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.ss__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  transition: width 0.25s ease;
+}
+.ss__progress-text {
+  position: absolute;
+  right: 10px;
+  top: -20px;
+  font: 700 11px monospace;
+  color: #64748b;
+}
+
+.ss__results {
+  margin-top: 6px;
+  overflow: auto;
+  max-height: 60vh;
+  display: grid;
+  gap: 6px;
+  padding-bottom: 6px;
+}
+.ss__group {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.6));
+  backdrop-filter: blur(6px);
+  padding: 6px 10px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 10px;
+  font: 800 12px "Be Vietnam Pro";
+  color: #0b2e1f;
+}
+.ss__item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background: #fff;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.2s;
+}
+.ss__item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.12);
+}
+.ss__item.is-active {
+  outline: 2px solid rgba(26, 127, 76, 0.25);
+}
+.ss__title {
+  font: 800 14px/1.35 "Be Vietnam Pro";
+  color: var(--ss-ink);
+  margin: 0;
+}
+.ss__url {
+  font: 700 11px/1.2 monospace;
+  color: #16a34a;
+  opacity: 0.85;
+}
+.ss__snippet {
+  font: 600 13px/1.45 "Be Vietnam Pro";
+  color: var(--ss-muted);
+}
+.ss__snippet mark {
+  background: #fef08a;
+  color: #111827;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+@media (max-width: 640px) {
+  .ss {
+    width: min(98vw, 640px);
+    padding: 12px;
+  }
+  .ss__input {
+    font-size: 15px;
+  }
+  .ss__kbdhint {
+    display: none;
+  }
+}
+
+/* =============== 8) FOOTER ============================== */
+.footer {
+  background: linear-gradient(90deg, #0f3f29, #145a39);
+  color: #fff;
+  padding: 5px 0;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  box-shadow: 0 -8px 28px rgba(16, 24, 40, 0.12);
+}
+.footer__wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.footer__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+}
+.footer__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 6px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+}
+.footer__icon:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 10px 22px rgba(0, 0, 0, 0.22);
+}
+.footer__addr {
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  opacity: 0.98;
+}
+.footer__right {
+  font-size: 15px;
+  opacity: 0.9;
+}
+.footer .container {
+  max-width: 100% !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+@media (max-width: 768px) {
+  .footer__wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .footer__right {
+    text-align: left;
+  }
+}
+/* --- PERF PATCH: Dropdown mượt --- */
+.submenu {
+  will-change: transform, opacity;
+  transform: translate3d(0, 8px, 0); /* promote layer */
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.12); /* nhẹ hơn */
+}
+
+/* Khi hover/mở, giữ lại transform 3D để tránh paint lại layout */
+.menu__item.hover-open > .submenu,
+.menu__item.pinned-open > .submenu {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Hạn chế blur nặng ở mobile/thiết bị yếu */
+@media (max-width: 1024px) {
+  .navbar {
+    backdrop-filter: none;
+  }
+}
+
+/* “Chế độ tiết kiệm hiệu ứng” cho máy yếu (JS sẽ thêm class này) */
+.reduce-effects .navbar {
+  backdrop-filter: none;
+}
+.reduce-effects .menu::before {
+  box-shadow: none;
+}
+.reduce-effects .submenu {
+  box-shadow: 0 6px 16px rgba(16, 24, 40, 0.1);
+}
+.reduce-effects .menu-link:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* --- PERF PATCH: Mobile menu animate bằng height (mượt hơn max-height) --- */
+@media (max-width: 1024px) {
+  .menu {
+    max-height: none; /* tắt animate max-height cũ */
+    height: 0; /* mặc định đóng */
+    overflow: auto;
+    transition: height 0.25s ease;
+    contain: layout paint; /* cô lập layout để bớt reflow toàn trang */
+  }
+  .menu.open {
+    height: var(--menu-h, 70vh); /* sẽ được set bằng JS theo scrollHeight */
+  }
+}
+
+/* Slider UX: clickable dots + tidy ring */
+.news-dot {
+  cursor: pointer;
+}
+.news-dot.is-active {
+  box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.22);
+  transform: scale(1.15);
+}
+
+/* Position slider arrows */
+.news-viewport {
+  position: relative;
+}
+.news-nav.prev {
+  left: -10px;
+  z-index: 2;
+}
+.news-nav.next {
+  right: -10px;
+  z-index: 2;
+}
+
+/* Hide arrow buttons completely when [hidden] is set */
+.news-nav[hidden] {
+  display: none !important;
+}
+
+/* === Smooth indicator: absolutely positioned so it won't shift layout === */
+.menu {
+  position: relative;
+}
+.menu .indicator {
+  position: absolute;
+  z-index: 0;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 0;
+  border-radius: 999px;
+  background: rgba(26, 127, 76, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 16px rgba(16, 24, 40, 0.08);
+  pointer-events: none;
+  opacity: 0;
+  transition: left 0.16s ease, width 0.16s ease, opacity 0.16s ease,
+    transform 0.16s ease;
+  will-change: left, width, opacity, transform;
+}
+
+/* ==== Active states for current page (parent green, child amber) ==== */
+:root {
+  --accent: #f59e0b; /* amber 500 */
+  --accent-2: #fbbf24; /* amber 400 */
+}
+
+/* Parent (pill) khi có trang con đang active */
+.menu__item.is-current-parent > .menu-link {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.25) inset,
+    0 10px 24px rgba(16, 24, 40, 0.12);
+}
+
+/* Child đang là trang hiện tại (cam + sáng) */
+.submenu a.is-current,
+.submenu a[aria-current="page"] {
+  background: linear-gradient(180deg, #fff7ed, #fffbeb); /* amber-50 */
+  color: #7c2d12; /* amber-900 */
+  font-weight: 800;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25) inset,
+    0 6px 18px rgba(245, 158, 11, 0.18);
+}
+
+.menu__item.has-submenu:has(
+    .submenu a.is-current,
+    .submenu a[aria-current="page"]
+  )
+  > .menu-link {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.25) inset,
+    0 10px 24px rgba(16, 24, 40, 0.12);
+}
+
+/* === Custom tweak: xanh lá cho active & hover (theo yêu cầu) === */
+.menu-link[aria-current="page"],
+.menu__item.is-current > .menu-link {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.25) inset,
+    0 10px 24px rgba(16, 24, 40, 0.12);
+}
+.menu-link--icon[aria-current="page"] i {
+  text-shadow: 0 0 8px rgba(52, 199, 89, 0.6);
+}
+/* Hover/Focus: nền chuyển xanh lá toàn menu */
+.menu__item:hover > .menu-link,
+.menu-link:focus-visible {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.22);
+}
+/* Indicator mặc định ẩn — sẽ bật khi JS định vị */
+.menu .indicator {
+  opacity: 0;
+}
+
+/* =======================
+   PATCH v2 — Wider Tech Modal + Reflective Backdrop
+   ======================= */
+
+/* Fainter backdrop + soft glare "mirror" */
+.modal-backdrop {
+  background: radial-gradient(
+      1200px 420px at 8% -10%,
+      rgba(34, 197, 94, 0.08),
+      transparent 60%
+    ),
+    radial-gradient(
+      1200px 420px at 92% 115%,
+      rgba(16, 185, 129, 0.08),
+      transparent 60%
+    ),
+    rgba(2, 6, 12, 0.42);
+  backdrop-filter: blur(3px) saturate(1.05);
+}
+.modal-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: -20% -10% -10% -10%;
+  /* 2 vệt phản quang + halo xanh rất nhẹ */
+  background: radial-gradient(
+      800px 280px at 30% 5%,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0) 60%
+    ),
+    radial-gradient(
+      1000px 380px at 85% 85%,
+      rgba(34, 197, 94, 0.12),
+      rgba(34, 197, 94, 0) 60%
+    );
+  filter: blur(10px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Modal rộng hơn, bo tròn lớn hơn */
+.modal.modal--tech {
+  width: min(96vw, 680px);
+  padding: 22px 20px 18px;
+  border-radius: 22px;
+}
+
+/* Bổ sung vệt phản quang trên bề mặt kính */
+.modal--tech::before {
+  background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.06) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.05) 0 1px,
+      transparent 1px 24px
+    ),
+    linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0) 18%,
+      rgba(255, 255, 255, 0.1) 32%,
+      rgba(255, 255, 255, 0) 46%
+    );
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0));
+}
+
+/* Nút to hơn để cân đối khung mới */
+.modal--tech .modal__actions {
+  gap: 16px;
+}
+.modal--tech .modal__actions .btn {
+  height: 52px;
+  border-radius: 14px;
+}
+
+/* =======================
+   PATCH v3 — Luxe Glass Backdrop + Premium Animations
+   ======================= */
+
+/* Backdrop: nhạt, màu kính, blur mạnh hơn và có "gương phản quang" */
+.modal-backdrop {
+  /* tint kính rất nhẹ */
+  background: rgba(8, 24, 18, 0.28);
+  backdrop-filter: blur(8px) saturate(1.12) brightness(1.03);
+}
+/* Caustics/Glare layer (phản quang mềm, động) */
+.modal-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: -6% -6%;
+  background: radial-gradient(
+      900px 360px at 20% -5%,
+      rgba(255, 255, 255, 0.22),
+      rgba(255, 255, 255, 0) 60%
+    ),
+    radial-gradient(
+      1200px 500px at 88% 110%,
+      rgba(34, 197, 94, 0.14),
+      rgba(34, 197, 94, 0) 60%
+    ),
+    radial-gradient(
+      1000px 420px at 10% 120%,
+      rgba(16, 185, 129, 0.12),
+      rgba(16, 185, 129, 0) 60%
+    );
+  filter: blur(14px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: glassCaustics 9s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+  opacity: 0.8;
+}
+/* Grid/film layer (rất nhẹ + chuyển động chậm) */
+.modal-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.02) 0 1px,
+      transparent 1px 24px
+    );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  opacity: 0.25;
+  transform: translate3d(0, 0, 0);
+  animation: gridDrift 16s linear infinite;
+  will-change: transform;
+}
+
+/* Modal xuất hiện với chuyển động mềm + depth */
+.modal--tech {
+  opacity: 0;
+  transform: translateY(14px) scale(0.975);
+}
+.modal-backdrop.show .modal--tech {
+  animation: modalIn 0.42s cubic-bezier(0.18, 1, 0.25, 1) forwards;
+}
+
+/* Keyframes */
+@keyframes glassCaustics {
+  0% {
+    transform: translate3d(-8px, -6px, 0) scale(1.02);
+    opacity: 0.72;
+  }
+  50% {
+    transform: translate3d(6px, 4px, 0) scale(1.04);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(10px, 8px, 0) scale(1.03);
+    opacity: 0.78;
+  }
+}
+@keyframes gridDrift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(20px, 12px, 0);
+  }
+}
+@keyframes modalIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.975);
+    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Motion-safe fallback */
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop::before,
+  .modal-backdrop::after {
+    animation: none !important;
+  }
+  .modal-backdrop {
+    backdrop-filter: blur(6px) saturate(1.05);
+  }
+  .modal--tech {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+}
+
+/* =======================
+   PATCH v4 — TECH PRO MAX (deeper glass + premium interactions)
+   ======================= */
+
+/* 1) Modal glass: deeper, layered, subtle noise + dynamic shine */
+.modal.modal--tech {
+  /* slightly deeper tint + subtle inner highlight */
+  background: radial-gradient(
+      120% 140% at 50% 0%,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0) 40%
+    ),
+    linear-gradient(180deg, rgba(7, 29, 23, 0.72), rgba(7, 29, 23, 0.85));
+  box-shadow: 0 28px 90px rgba(2, 6, 12, 0.55),
+    0 2px 0 rgba(255, 255, 255, 0.04) inset, 0 -1px 0 rgba(0, 0, 0, 0.25) inset;
+  border-radius: 22px;
+  border: 1px solid rgba(196, 255, 226, 0.18);
+}
+
+/* Combine grid + micro-noise + moving glare */
+.modal--tech::before {
+  background:
+    /* sweeping glare band */ linear-gradient(
+        115deg,
+        rgba(255, 255, 255, 0) 35%,
+        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0) 65%
+      )
+      0% 0% / 200% 200% no-repeat,
+    /* tech grid */
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.055) 0 1px,
+        transparent 1px 24px
+      ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.045) 0 1px,
+      transparent 1px 24px
+    ),
+    /* micro noise */
+      radial-gradient(
+        150% 100% at 50% 0%,
+        rgba(255, 255, 255, 0.02),
+        rgba(255, 255, 255, 0)
+      );
+  animation: modalShine 7s ease-in-out infinite;
+}
+@keyframes modalShine {
+  0% {
+    background-position: -120% -120%, 0 0, 0 0, 0 0;
+  }
+  50% {
+    background-position: 0% 0%, 0 0, 0 0, 0 0;
+  }
+  100% {
+    background-position: 120% 120%, 0 0, 0 0, 0 0;
+  }
+}
+
+/* Outer neon ring softer + corner glow */
+.modal--tech::after {
+  background: linear-gradient(
+    135deg,
+    rgba(94, 234, 212, 0.65),
+    rgba(34, 197, 94, 0.6),
+    rgba(13, 148, 136, 0.55)
+  );
+  box-shadow: 0 0 50px rgba(94, 234, 212, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+/* Title: emboss + soft glow */
+.modal--tech .modal__title {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 26px rgba(34, 197, 94, 0.35);
+  letter-spacing: 0.3px;
+}
+
+/* 2) Buttons — premium micro‑interactions */
+/* shared */
+.modal--tech .modal__actions .btn {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s ease, box-shadow 0.25s ease, background 0.25s ease,
+    border-color 0.25s ease, filter 0.25s ease;
+}
+.modal--tech .modal__actions .btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.35),
+    0 10px 26px rgba(16, 24, 40, 0.28);
+}
+
+/* primary gradient with breathing glow */
+.modal--tech .btn-primary {
+  background: linear-gradient(135deg, #16a34a, #22c55e, #10b981);
+  box-shadow: 0 14px 30px rgba(34, 197, 94, 0.35);
+  filter: saturate(1.05);
+  animation: breatheGlow 4.8s ease-in-out infinite;
+}
+@keyframes breatheGlow {
+  0%,
+  100% {
+    box-shadow: 0 14px 30px rgba(34, 197, 94, 0.28);
+  }
+  50% {
+    box-shadow: 0 20px 42px rgba(34, 197, 94, 0.42);
+  }
+}
+
+/* sheen sweep on hover */
+.modal--tech .btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: -40% -20% -40% -20%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  transform: translateX(-120%) skewX(-12deg);
+  filter: blur(6px);
+  pointer-events: none;
+  transition: transform 0.75s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+.modal--tech .btn-primary:hover::after {
+  transform: translateX(120%) skewX(-12deg);
+}
+
+/* press depth */
+.modal--tech .modal__actions .btn:active {
+  transform: translateY(1px) scale(0.995);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25) inset;
+}
+
+/* Outline button: crystalline glass + neon ring on hover */
+.modal--tech .btn-outline {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+  border-color: rgba(94, 234, 212, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.modal--tech .btn-outline:hover {
+  border-color: rgba(94, 234, 212, 0.75);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.05)
+  );
+  box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.22),
+    0 16px 34px rgba(45, 212, 191, 0.22);
+}
+
+/* Ghost ripple (centered) */
+.modal--tech .modal__actions .btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0) 60%
+  );
+  opacity: 0;
+  transform: translateZ(0);
+}
+.modal--tech .modal__actions .btn:active::before {
+  width: 240%;
+  height: 240%;
+  opacity: 0.25;
+  transition: width 0.45s ease, height 0.45s ease, opacity 0.6s ease;
+}
+
+/* 3) Backdrop — softer mint glass + animated bokeh */
+.modal-backdrop {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 20, 16, 0.3),
+    rgba(6, 20, 16, 0.36)
+  );
+  backdrop-filter: blur(9px) saturate(1.14);
+}
+.modal-backdrop .bokeh {
+  display: none;
+} /* guard if any HTML elements exist */
+
+/* pseudo bokeh using ::before circles */
+.modal-backdrop::before {
+  /* keep from v3 but enhance movement via keyframes already declared */
+  animation: glassCaustics 8s ease-in-out infinite alternate;
+}
+/* add floating bokeh blobs */
+.modal-backdrop::after {
+  background: radial-gradient(
+      80px 80px at 12% 30%,
+      rgba(94, 234, 212, 0.18),
+      rgba(94, 234, 212, 0) 60%
+    ),
+    radial-gradient(
+      110px 100px at 88% 70%,
+      rgba(34, 197, 94, 0.16),
+      rgba(34, 197, 94, 0) 60%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.02) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.015) 0 1px,
+      transparent 1px 24px
+    );
+  animation: gridDrift 20s linear infinite;
+  opacity: 0.28;
+}
+
+/* 4) Motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .modal--tech .btn-primary {
+    animation: none !important;
+  }
+  .modal--tech .btn-primary::after {
+    display: none !important;
+  }
+}
+
+/* =======================
+   PATCH v5 — ULTRA (Supreme) Modal
+   ======================= */
+
+/* BACKDROP — cinematic glass + vignette + slow rotating sheen */
+.modal-backdrop {
+  background: radial-gradient(
+      1600px 600px at 50% -20%,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0) 60%
+    ),
+    radial-gradient(
+      1400px 700px at 50% 120%,
+      rgba(34, 197, 94, 0.085),
+      rgba(34, 197, 94, 0) 60%
+    ),
+    rgba(6, 20, 16, 0.34);
+  backdrop-filter: blur(10px) saturate(1.16) contrast(1.02);
+}
+.modal-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: -15% -12%;
+  background: conic-gradient(
+      from 0deg at 60% -10%,
+      rgba(255, 255, 255, 0.16),
+      rgba(255, 255, 255, 0) 35%
+    ),
+    conic-gradient(
+      from 180deg at 40% 115%,
+      rgba(13, 148, 136, 0.12),
+      rgba(13, 148, 136, 0) 40%
+    );
+  filter: blur(22px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: ultraSheen 22s linear infinite;
+  opacity: 0.7;
+}
+.modal-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* faint grain so glass looks physical */ radial-gradient(
+      120% 100% at 50% 0%,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.018) 0 1px,
+      transparent 1px 26px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.015) 0 1px,
+      transparent 1px 26px
+    );
+  opacity: 0.22;
+  mix-blend-mode: screen;
+  animation: gridDrift 24s linear infinite;
+}
+
+@keyframes ultraSheen {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* MODAL — multi‑layer frosted glass with luxe gradient border */
+.modal.modal--tech {
+  width: min(96vw, 760px);
+  border-radius: 24px;
+  padding: 24px 22px 20px;
+  color: #e6ffef;
+  background:
+    /* inner highlight */ radial-gradient(
+      140% 120% at 50% 0%,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0) 35%
+    ),
+    /* base glass tint */
+      linear-gradient(180deg, rgba(8, 32, 26, 0.68), rgba(8, 32, 26, 0.84));
+  backdrop-filter: blur(18px) saturate(1.24);
+  border: 1px solid rgba(190, 255, 230, 0.18);
+  box-shadow: 0 40px 130px rgba(0, 0, 0, 0.55),
+    0 2px 0 rgba(255, 255, 255, 0.05) inset, 0 -1px 0 rgba(0, 0, 0, 0.25) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* premium gradient border + corner aura */
+.modal--tech::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(94, 234, 212, 0.7),
+    rgba(34, 197, 94, 0.65),
+    rgba(13, 148, 136, 0.6)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  box-shadow: 0 0 60px rgba(34, 197, 94, 0.22),
+    inset 0 0 32px rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+/* layered specular grid + sweeping highlight */
+.modal--tech::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+        115deg,
+        rgba(255, 255, 255, 0) 35%,
+        rgba(255, 255, 255, 0.13) 50%,
+        rgba(255, 255, 255, 0) 65%
+      )
+      0% 0% / 220% 220% no-repeat,
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.045) 0 1px,
+      transparent 1px 24px
+    );
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+  animation: modalShine 8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes modalShine {
+  0% {
+    background-position: -140% -140%, 0 0, 0 0;
+  }
+  50% {
+    background-position: 0% 0%, 0 0, 0 0;
+  }
+  100% {
+    background-position: 140% 140%, 0 0, 0 0;
+  }
+}
+
+/* TITLE — supreme emboss */
+.modal--tech .modal__title {
+  margin: 0 42px 14px 2px;
+  font-weight: 900;
+  letter-spacing: 0.35px;
+  font-size: 20px;
+  background: linear-gradient(90deg, #caffee, #ffffff 50%, #caffee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 32px rgba(34, 197, 94, 0.36);
+}
+
+/* Close btn — soft glass chip */
+.modal--tech .modal__close {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* BUTTONS — supreme interactions */
+.modal--tech .modal__actions {
+  gap: 18px;
+}
+.modal--tech .modal__actions .btn {
+  height: 56px;
+  border-radius: 16px;
+  font-weight: 900;
+  letter-spacing: 0.25px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.28s ease, background 0.28s ease,
+    border-color 0.28s ease, filter 0.28s ease;
+}
+.modal--tech .modal__actions .btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.35),
+    0 12px 30px rgba(16, 24, 40, 0.28);
+}
+/* Primary CTA */
+.modal--tech .btn-primary {
+  background: linear-gradient(135deg, #16a34a, #22c55e, #10b981);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  box-shadow: 0 20px 44px rgba(34, 197, 94, 0.42);
+  filter: saturate(1.06);
+  animation: breatheGlow 4.8s ease-in-out infinite;
+}
+.modal--tech .btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: -45% -25%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.38) 52%,
+    rgba(255, 255, 255, 0) 64%
+  );
+  transform: translateX(-120%) skewX(-12deg);
+  filter: blur(8px);
+  pointer-events: none;
+  transition: transform 0.75s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+.modal--tech .btn-primary:hover::after {
+  transform: translateX(120%) skewX(-12deg);
+}
+@keyframes breatheGlow {
+  0%,
+  100% {
+    box-shadow: 0 18px 40px rgba(34, 197, 94, 0.34);
+  }
+  50% {
+    box-shadow: 0 26px 56px rgba(34, 197, 94, 0.48);
+  }
+}
+
+/* Outline */
+.modal--tech .btn-outline {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.025)
+  );
+  border-color: rgba(94, 234, 212, 0.42);
+  color: #e9fff6;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.modal--tech .btn-outline:hover {
+  border-color: rgba(94, 234, 212, 0.8);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.05)
+  );
+  box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.22),
+    0 18px 36px rgba(45, 212, 191, 0.22);
+}
+
+/* ripple */
+.modal--tech .modal__actions .btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0) 60%
+  );
+  opacity: 0;
+  transform: translateZ(0);
+}
+.modal--tech .modal__actions .btn:active::before {
+  width: 260%;
+  height: 260%;
+  opacity: 0.25;
+  transition: width 0.45s ease, height 0.45s ease, opacity 0.6s ease;
+}
+.modal--tech .modal__actions .btn:active {
+  transform: translateY(1px) scale(0.995);
+}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .modal--tech {
+    animation: none !important;
+  }
+  .modal--tech .btn-primary,
+  .modal-backdrop::before {
+    animation: none !important;
+  }
+  .modal--tech .btn-primary::after {
+    display: none !important;
+  }
+}

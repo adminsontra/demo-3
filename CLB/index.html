@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="child"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HOẠT ĐỘNG & CUỘC THI TỪ CLB</title>
+    <meta
+      name="description"
+      content="Image slider hiện đại: swipe, autoplay, thumbnails, dots, lightbox, fullscreen, Fit/Fill, lazy-load, ARIA."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <a href="../child/index.html" style="text-decoration: none"><h1 class="app-title">THƯ VIỆN ẢNH HOẠT ĐỘNG & CUỘC THI TỪ CLB </h1></a>
+      </a>
+
+      <!-- Slider root: data-fit = contain|cover (default contain shows toàn bộ ảnh) -->
+      <section
+        id="slider"
+        class="slider"
+        role="region"
+        aria-label="Bộ trình chiếu ảnh"
+        data-fit="contain"
+      >
+        <div class="slider__viewport" aria-live="polite">
+          <!-- Thêm / bớt slide bằng cách thêm <figure class="slide"> dưới đây -->
+          <figure class="slide is-active">
+            <img
+              src="1.jpg"
+              alt="picture 1"
+              loading="lazy"
+              fetchpriority="high"
+            />
+          </figure>
+
+          <figure class="slide">
+            <img src="2.jpg" alt="picture 2" loading="lazy" />
+          </figure>
+
+          <figure class="slide">
+            <img src="3.jpg" alt="picture 3" loading="lazy" />
+          </figure>
+
+          <figure class="slide">
+            <img src="4.jpg" alt="picture 4" loading="lazy" />
+          </figure>
+
+          <figure class="slide">
+            <img src="5.jpg" alt="picture 5" loading="lazy" />
+          </figure>
+
+          <figure class="slide">
+            <img src="6.jpg" alt="picture 6" loading="lazy" />
+          </figure>
+        </div>
+
+        <!-- Điều khiển -->
+        <button
+          class="ctrl ctrl--prev"
+          aria-label="Ảnh trước"
+          data-action="prev"
+        >
+          ❮
+        </button>
+        <button
+          class="ctrl ctrl--next"
+          aria-label="Ảnh tiếp"
+          data-action="next"
+        >
+          ❯
+        </button>
+
+        <!-- Thanh công cụ -->
+        <div class="toolbar" role="toolbar" aria-label="Điều khiển slider">
+          <button
+            class="btn"
+            data-action="toggle-autoplay"
+            aria-pressed="false"
+            aria-label="Bật/tắt tự động chạy"
+          >
+            ▶︎ Auto
+          </button>
+          <button
+            class="btn"
+            data-action="toggle-fit"
+            aria-pressed="true"
+            aria-label="Chế độ hiển thị ảnh: Vừa khung (Fit)"
+          >
+            Fit
+          </button>
+          <button
+            class="btn"
+            data-action="toggle-fullscreen"
+            aria-pressed="false"
+            aria-label="Bật/tắt fullscreen thực sự"
+          >
+            ⛶ Fullscreen
+          </button>
+        </div>
+
+        <!-- Chấm điều hướng (sinh tự động) -->
+        <div class="dots" role="tablist" aria-label="Chọn ảnh"></div>
+
+        <!-- Thumbnails (sinh tự động) -->
+        <div class="thumbs" aria-label="Ảnh thu nhỏ"></div>
+      </section>
+    </main>
+
+    <!-- Lightbox toàn màn hình -->
+    <div id="lightbox" class="lightbox" aria-hidden="true" hidden>
+      <button class="lightbox__close" aria-label="Đóng (Esc)" data-lb="close">
+        ✕
+      </button>
+      <figure class="lightbox__figure">
+        <img id="lightbox-img" alt="" />
+        <figcaption id="lightbox-cap"></figcaption>
+      </figure>
+      <button
+        class="lightbox__nav lightbox__nav--prev"
+        data-lb="prev"
+        aria-label="Ảnh trước"
+      >
+        ❮
+      </button>
+      <button
+        class="lightbox__nav lightbox__nav--next"
+        data-lb="next"
+        aria-label="Ảnh tiếp"
+      >
+        ❯
+      </button>
+      <div
+        class="lightbox__toolbar"
+        role="toolbar"
+        aria-label="Điều khiển lightbox"
+      >
+        <button class="btn" data-lb="toggle-fit" aria-label="Chuyển Fit/Fill">
+          Fit
+        </button>
+        <button
+          class="btn"
+          data-lb="toggle-fullscreen"
+          aria-label="Bật/tắt fullscreen hệ thống"
+        >
+          ⛶
+        </button>
+      </div>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

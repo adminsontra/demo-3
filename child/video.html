@@ -1,0 +1,3586 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video về dự án bảo vệ không gian mạng toàn cầu</title>
+  <style>
+    /* ===== Design Tokens: VIP‑Pro ===== */
+    :root{
+      --hue: 145; --sat: 96%;
+      --brand: hsl(var(--hue) var(--sat) 60%);
+      --brand-strong: hsl(var(--hue) var(--sat) 52%);
+      --brand-gold: #F6E27A;
+      --text: #EFFFF5; --muted:#B5D1C8;
+      --bg-0:#04070B; --bg-1:#0A121A; --grid: hsla(var(--hue) 90% 55% /.10);
+      --radius-2xl: 28px; --radius-xl: 22px; --radius-md: 12px;
+      --shadow-neo: 0 0 0 1px hsla(var(--hue) 90% 55% /.18) inset, 0 12px 36px rgba(0,0,0,.50), 0 0 40px hsla(var(--hue) 90% 55% /.18);
+      --stars:.55; --gridMask:1; --orbPulse:0;
+    }
+    *{box-sizing:border-box;font-family: "Merriweather", "Noto Serif", Georgia, serif;}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font: 500 16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 800px at 15% 10%, #101a22 0%, var(--bg-1) 40%, var(--bg-0) 100%);
+      overflow-x:hidden;
+    }
+
+    /* ===== Ambient universe ===== */
+    .stars, .stars:before, .stars:after{
+      position:fixed; inset:-50vh -50vw; content:""; pointer-events:none; z-index:0;
+      background-repeat:repeat; background-size:56px 56px; opacity:calc(var(--stars) * .9);
+      background-image:radial-gradient(2px 2px at 14px 14px, rgba(255,255,255,.22) 50%, transparent 52%);
+      animation: drift 160s linear infinite; filter: drop-shadow(0 0 2px hsla(var(--hue) 90% 55% /.28));
+    }
+    .stars:before{animation-duration:200s; opacity:calc(var(--stars) * .6)}
+    .stars:after{animation-duration:260s; opacity:calc(var(--stars) * .4)}
+    @keyframes drift{to{transform:translate3d(60px,60px,0)}}
+    .grid-bg{position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image: linear-gradient(transparent 31px, var(--grid) 32px), linear-gradient(90deg, transparent 31px, var(--grid) 32px);
+      background-size:32px 32px; opacity:calc(.45 * var(--gridMask)); mix-blend-mode:screen;
+      mask: radial-gradient(85% 65% at 28% 18%, #000 60%, transparent 100%);
+    }
+    .orb-bg{position:fixed; width:64vmax; aspect-ratio:1; left:-15vmax; top:-20vmax; z-index:0; pointer-events:none;
+      background: radial-gradient(closest-side, hsla(var(--hue) 90% 55% /.20), transparent 70%);
+      filter: blur(18px); opacity: calc(.6 + var(--orbPulse)*.25);
+      animation: orb 22s ease-in-out infinite alternate;
+    }
+    @keyframes orb{ from{ transform:translate3d(0,0,0) rotate(0deg);} to{ transform:translate3d(6vmax,4vmax,0) rotate(20deg);} }
+
+    /* ===== Shell Layout ===== */
+    .shell{ position:relative; z-index:1; padding: clamp(16px, 4vw, 40px) }
+    .topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 auto; max-width:1240px; padding-bottom:18px}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{width:38px; height:38px; border-radius:12px;
+      background:
+        conic-gradient(from 200deg, var(--brand), transparent 40%, var(--brand)),
+        radial-gradient(closest-side, rgba(246,226,122,.6), transparent 70%);
+      box-shadow: 0 0 24px hsla(var(--hue) 90% 55% /.55);
+      border:1px solid rgba(246,226,122,.35);
+    }
+    .brand h1{font-size:18px; margin:0; letter-spacing:.12em; text-transform:uppercase; opacity:.95}
+    .presetbar{display:flex; gap:8px; align-items:center}
+    .chipbtn{border:1px solid hsla(var(--hue) 90% 55% /.35); background:linear-gradient(180deg, hsla(var(--hue) 90% 55% /.12), hsla(var(--hue) 90% 55% /.06)); color:var(--text); padding:8px 10px; border-radius:999px; cursor:pointer; font-weight:700}
+    .hue{width:160px}
+
+    .layout{display:grid; gap:clamp(16px, 3vw, 28px); grid-template-columns:1.25fr 1fr; align-items:start; max-width:1240px; margin:0 auto}
+
+    /* ===== LEFT: Player ===== */
+    .holo-panel{
+      position:relative; overflow:hidden; border-radius: var(--radius-2xl);
+      background: linear-gradient(180deg, hsla(var(--hue) 90% 55% /.12), hsla(var(--hue) 90% 55% /.05));
+      border: 1px solid hsla(var(--hue) 90% 55% /.28);
+      box-shadow: var(--shadow-neo);
+      backdrop-filter: blur(12px) saturate(120%);
+      transform: perspective(1200px) rotateX(var(--tX, 0deg)) rotateY(var(--tY, 0deg)) translateZ(0);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform .16s ease-out;
+      isolation:isolate; padding: clamp(14px, 2.4vw, 24px);
+    }
+    .panel-header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 8px 12px}
+    .badge{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--text);
+      background: linear-gradient(90deg, rgba(246,226,122,.15), hsla(var(--hue)90%55%/.12));
+      border:1px solid rgba(246,226,122,.35); padding:6px 10px; border-radius:999px;
+      box-shadow:0 0 12px hsla(var(--hue) 90% 55% /.25) inset
+    }
+    .muted{color:var(--muted); font-size:13px}
+    .video-wrap{position:relative; border-radius: 22px; overflow:hidden; background:#071013; outline:1px solid hsla(var(--hue) 90% 55% /.35); box-shadow: var(--shadow-neo)}
+    video{width:100%; display:block; aspect-ratio:16/9; object-fit:cover; filter:contrast(1.05) saturate(1.12)}
+
+    /* ===== VIP‑Pro YT-like control bar ===== */
+    .ytbar{position:absolute; left:0; right:0; bottom:0; padding:10px 12px; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.55) 28%); pointer-events:none;}
+    .ytbar-inner{pointer-events:auto; display:flex; flex-direction:column; gap:8px}
+    .scrub{position:relative; height:6px; border-radius:999px; cursor:pointer; background: rgba(255,255,255,.2); box-shadow: inset 0 0 0 1px rgba(246,226,122,.2)}
+    .scrub .buf{position:absolute; left:0; top:0; bottom:0; width:0; background: rgba(255,255,255,.35); border-radius:999px}
+    .scrub .prog{position:absolute; left:0; top:0; bottom:0; width:0; background: linear-gradient(90deg, var(--brand-strong), rgba(246,226,122,.85)); border-radius:999px; box-shadow: 0 0 16px rgba(246,226,122,.35)}
+    .scrub .knob{position:absolute; top:50%; transform: translate(-50%,-50%); width:14px; height:14px; border-radius:50%; background:#fff; box-shadow:0 0 0 2px var(--brand-strong); opacity:0; transition:opacity .15s ease}
+    .scrub:hover .knob, .scrubbing .scrub .knob{opacity:1}
+    .buttons{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .left, .right{display:flex; align-items:center; gap:8px}
+    .iconbtn{width:36px; height:36px; display:grid; place-items:center; border-radius:12px; cursor:pointer;
+      border:1px solid hsla(var(--hue) 90% 55% /.32);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        radial-gradient(120% 120% at 50% -20%, rgba(246,226,122,.18), transparent 60%);
+      color:var(--text);
+      box-shadow: 0 10px 20px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .iconbtn:focus-visible{outline:2px solid var(--brand-gold); outline-offset:2px}
+    .timecode{font-variant-numeric:tabular-nums; font-size:13px; color:#EFFFF5; opacity:.95; margin-left:6px; white-space:nowrap}
+
+    /* ⋮ more menu */
+    .more{position:relative}
+    .more-menu{position:absolute; right:0; bottom:44px; background:rgba(10,16,22,.96);
+      border:1px solid hsla(var(--hue) 90% 55% /.28); border-radius:16px; min-width:230px; padding:10px;
+      display:none; box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.04);
+      backdrop-filter: blur(8px);
+    }
+    .more-menu.open{display:block}
+    .row{padding:8px 6px; border-radius:12px}
+    .row + .row{margin-top:8px}
+    .row:hover{background:rgba(255,255,255,.04)}
+    .row .label{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#D8EFE7; margin-bottom:6px}
+    .speed-grid{display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap:6px}
+    .speed-grid button{border:0; border-radius:10px; padding:6px 0; cursor:pointer; font-weight:800; color:#EFFFF5;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));}
+    .speed-grid button[aria-checked="true"]{outline:2px solid var(--brand-strong); background:rgba(246,226,122,.15)}
+
+    /* Vertical volume slider */
+    .vstack{display:grid; place-items:center}
+    .vbar{position:relative; width:12px; height:110px; border-radius:999px; cursor:pointer;
+      background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      border:1px solid hsla(var(--hue) 90% 55% /.28);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 6px 12px rgba(0,0,0,.35);
+    }
+    .vf{position:absolute; left:0; right:0; bottom:0; height:0;
+      background: linear-gradient(180deg, rgba(246,226,122,.9), var(--brand-strong));
+      border-radius:999px; box-shadow: 0 0 12px rgba(246,226,122,.35);
+    }
+    .vknob{position:absolute; left:50%; transform:translateX(-50%); width:16px; height:16px; border-radius:50%; background:#fff;
+      box-shadow:0 0 0 2px var(--brand-strong); top:100%; margin-top:-8px;
+    }
+
+    /* ===== RIGHT dock ===== */
+    .dock{display:grid; gap:14px}
+    .card{position:relative; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid hsla(var(--hue) 90% 55% /.28); border-radius:var(--radius-xl); padding: 16px; box-shadow: var(--shadow-neo); backdrop-filter: blur(6px)}
+    .card h2{margin:2px 0 12px; font-weight:800; letter-spacing:.02em}
+    .orb-wrap{position:relative; height:300px; display:grid; place-items:center; overflow:visible}
+    .magic-orb{position:relative; width:230px; aspect-ratio:1; border-radius:50%;
+      background:
+        radial-gradient(40% 40% at 35% 35%, hsla(var(--hue) 90% 65% /.85), transparent 60%),
+        radial-gradient(65% 65% at 60% 60%, hsla(var(--hue) 80% 45% /.55), transparent 65%),
+        radial-gradient(closest-side, rgba(15, 240, 180, calc(.18 + var(--orbPulse)*.25)), rgba(0,0,0,.0) 80%);
+      box-shadow: inset 0 0 28px hsla(var(--hue) 90% 55% /.55), 0 0 calc(20px + var(--orbPulse)*30px) hsla(var(--hue) 90% 55% /.4), 0 30px 60px rgba(0,0,0,.55);
+      filter: saturate(calc(115% + var(--orbPulse)*20%));
+      transform-style: preserve-3d; animation: orbFloat 6s ease-in-out infinite alternate;
+    }
+    @keyframes orbFloat{to{ transform: translateY(-8px)}}
+    canvas#spectrum{position:absolute; width:260px; height:260px; pointer-events:none; filter: drop-shadow(0 0 6px hsla(var(--hue) 90% 55% /.55));}
+    .orb-caption{margin-top:10px; text-align:center; font-size:13px; color:#cfeee6}
+
+    /* Playlist */
+    .listbar{display:flex; align-items:center; justify-content:space-between; margin-top:10px; gap:12px; flex-wrap:wrap}
+    .playlist{margin-bottom:10px; display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px; padding-top:12px}
+    .thumb{position:relative; border-radius:14px; overflow:hidden; cursor:pointer; border:1px solid hsla(var(--hue) 90% 55% /.28); background:#0a1416; box-shadow:0 4px 12px rgba(0,0,0,.25); transition: transform .18s ease, box-shadow .18s ease}
+    .thumb:hover{ transform: translateY(-2px); box-shadow:0 10px 22px rgba(0,0,0,.35) }
+    .thumb.active{ outline:2px solid var(--brand-strong); box-shadow:0 0 0 3px hsla(var(--hue) 90% 55% /.25) }
+    .thumb img{width:100%; height:96px; object-fit:cover; display:block; filter:contrast(1.05)}
+    .thumb .meta{padding:10px 12px; font-size:13px; color:var(--text); white-space:nowrap; text-overflow:ellipsis; overflow:hidden}
+    .thumb .badge{position:absolute; top:6px; left:6px}
+
+    /* Control Dock: universe + player defaults */
+    .controls-grid{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .fieldset{border:1px solid hsla(var(--hue) 90% 55% /.25); border-radius:12px; padding:10px}
+    .fieldset legend{padding:0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#d9eee6}
+
+    /* Responsive */
+    @media (max-width:1080px){ .layout{ grid-template-columns:1fr } .holo-panel{ transform:none } }
+  
+    /* ===== Guidelines Card ===== */
+    .guide{position:relative; border-radius:var(--radius-xl); padding:18px; background:linear-gradient(180deg, rgba(0,255,140,.06), rgba(0,255,140,.02)); border:1px solid hsla(var(--hue) 90% 55% /.35); box-shadow: var(--shadow-neo)}
+    .guide h2{margin:0 0 12px; font-weight:900}
+    .guide-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+    .guide-col{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid hsla(var(--hue) 90% 55% /.28); border-radius:16px; padding:14px}
+    .guide-col h3{margin:0 0 10px; font-size:14px; letter-spacing:.12em; text-transform:uppercase; color:#d9eee6}
+    .glist{margin:0; padding:0; list-style:none; display:grid; gap:10px}
+    .gitem{display:grid; grid-template-columns:20px 1fr; gap:10px; align-items:start}
+    .gicon{width:20px; height:20px; display:grid; place-items:center; border-radius:50%}
+    .gicon.ok{outline:1px solid hsla(var(--hue) 90% 55% /.45)}
+    .gicon.no{outline:1px solid rgba(255,85,100,.35)}
+    .gicon svg{width:14px; height:14px}
+    .guide footer{margin-top:10px; font-size:12px; color:var(--muted)}
+    .guide details{margin-top:8px}
+    .guide details > summary{cursor:pointer; opacity:.9}
+    .guide img{max-width:100%; border-radius:12px; border:1px solid hsla(var(--hue) 90% 55% /.25)}
+    @media (max-width:860px){ .guide-grid{grid-template-columns:1fr} }
+
+    /* Focus states for a11y */
+    .thumb:focus-visible, .chipbtn:focus-visible, .speed-grid button:focus-visible, .iconbtn:focus-visible, .row button:focus-visible{
+      outline:2px solid var(--brand-gold); outline-offset:2px;
+    }
+
+  
+    /* ===== Guidelines: TABLE version ===== */
+    .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .guide-table{position:relative; margin-top:14px; border-radius:var(--radius-xl); padding:18px; background:linear-gradient(180deg, rgba(0,255,140,.06), rgba(0,255,140,.02)); border:1px solid hsla(var(--hue) 90% 55% /.35); box-shadow: var(--shadow-neo);}
+    .guide-table h2{margin:0 0 12px; font-weight:900}
+    .guide-table table{width:100%; border-collapse:separate; border-spacing:0; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid hsla(var(--hue) 90% 55% /.28); border-radius:16px; overflow:hidden}
+    .guide-table thead th{padding:12px 14px; font-size:14px; letter-spacing:.12em; text-transform:uppercase; text-align:left; color:#d9eee6; background:linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,.06)); border-bottom:1px solid hsla(var(--hue) 90% 55% /.25)}
+    .guide-table tbody td{padding:14px; vertical-align:top; border-bottom:1px solid hsla(var(--hue) 90% 55% /.15)}
+    .guide-table tbody tr:last-child td{border-bottom:0}
+    .guide-table .ok::before{content:"✓ "; font-weight:900; margin-right:4px; color:#aef9d2}
+    .guide-table .no::before{content:"✗ "; font-weight:900; margin-right:4px; color:#ff8790}
+    .guide-table details{margin-top:10px}
+    .guide-table details > summary{cursor:pointer; opacity:.9}
+    .guide-table img{max-width:100%; border-radius:12px; border:1px solid hsla(var(--hue) 90% 55% /.25)}
+    @media (max-width:860px){
+      .guide-table table, .guide-table tbody, .guide-table tr, .guide-table td, .guide-table thead { display:block; width:100% }
+      .guide-table thead{display:none}
+      .guide-table tbody td{border-bottom:0; padding:10px 12px}
+      .guide-table tbody tr{border:1px solid hsla(var(--hue) 90% 55% /.18); border-radius:14px; padding:8px; margin-bottom:10px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01))}
+      .guide-table tbody tr::before{content:"Cặp quy tắc"; display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+      .guide-table tbody td + td{margin-top:6px}
+    }
+
+  
+    /* ===== VIP-Pro Quick Panel (bottom-right) ===== */
+    .vipdock{position:fixed; right:16px; bottom:16px; z-index:8; display:grid; gap:8px; align-items:end; justify-items:end}
+    .vipdock .fab, .vipdock .act{width:46px; height:46px; display:grid; place-items:center; border-radius:16px; cursor:pointer;
+      border:1px solid hsla(var(--hue) 90% 55% /.32);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        radial-gradient(120% 120% at 50% -20%, rgba(246,226,122,.18), transparent 60%);
+      color:var(--text);
+      box-shadow: 0 10px 20px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .vipdock .fab{width:54px; height:54px; border-radius:18px; position:relative}
+    .vipdock .menu{display:none; grid-template-columns:1fr; gap:8px; margin-bottom:4px}
+    .vipdock.open .menu{display:grid}
+    .vipdock .label{position:absolute; right:54px; white-space:nowrap; background:rgba(0,0,0,.6); padding:6px 8px; border-radius:10px; border:1px solid hsla(var(--hue) 90% 55% /.28); font-size:12px; pointer-events:none; opacity:0; transform:translateX(6px); transition:.15s}
+    .vipdock .act:hover .label{opacity:1; transform:translateX(0)}
+    .vipdock .act[aria-pressed="true"]{outline:2px solid var(--brand-strong)}
+    .vipdock .muted-tip{font-size:12px; text-align:right; color:var(--muted);}
+    /* Theater & lights */
+    .theater .layout{grid-template-columns:1fr}
+    .theater .dock{display:none}
+    .dim-layer{position:fixed; inset:0; background:rgba(0,0,0,.72); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:2}
+    .lights-off .dim-layer{opacity:1; pointer-events:auto}
+
+  
+    /* ===== Bookmarks panel ===== */
+    .bm-panel{position:relative; display:none; width:260px; background:rgba(10,16,22,.96); border:1px solid hsla(var(--hue) 90% 55% /.28); border-radius:14px; padding:10px; box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.04); backdrop-filter: blur(8px)}
+    .bm-panel.open{display:block}
+    .bm-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px}
+    .bm-head h4{margin:0; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#d9eee6}
+    .bm-list{display:grid; gap:6px; max-height:220px; overflow:auto; padding-right:2px}
+    .bm-item{display:grid; grid-template-columns:auto 1fr auto auto; gap:8px; align-items:center; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border-radius:10px; padding:6px}
+    .bm-item .ts{font-variant-numeric:tabular-nums; font-weight:800}
+    .bm-item button{border:0; background:transparent; color:var(--text); cursor:pointer}
+    .bm-actions{display:flex; gap:6px}
+    .bm-empty{color:var(--muted); font-size:12px}
+
+    /* ===== VIP Corner (ĐÃ SỬA) Cố định ở góc dưới bên phải màn hình ===== */
+.vip-corner {
+    /* ----- Thuộc tính chính ----- */
+    position: fixed !important;
+    bottom: 16px !important;
+    right: 16px !important;
+    z-index: 9;
+
+    /* ----- Kích thước ----- */
+    width: 380px !important;
+    max-width: 42vw !important;
+
+    /* ----- Giao diện (Lấy từ thiết kế "refreshed UI") ----- */
+    background: linear-gradient(180deg, rgba(9,15,20,.92), rgba(9,15,20,.86));
+    border: 1px solid hsla(var(--hue) 90% 55% /.35);
+    border-radius: 20px;
+    padding: 14px 14px 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.55), 0 0 40px hsla(var(--hue) 90% 55% /.18), inset 0 0 0 1px rgba(255,255,255,.04);
+    backdrop-filter: blur(10px) saturate(115%);
+
+    /* ----- Reset các thuộc tính từ quy tắc cũ để tránh xung đột ----- */
+    left: auto !important;
+    justify-self: auto !important;
+}
+
+    /* Nâng bảng điều khiển nhanh (VIP-Pro) lên để không bị che lấp bởi VIP Corner */
+    .vipdock {
+        bottom: 86px !important;
+    }
+
+    /* ----- Điều chỉnh cho màn hình nhỏ hơn ----- */
+    @media (max-width: 1080px) {
+        .vip-corner {
+            right: 12px !important;
+            left: 12px !important;
+            bottom: 12px !important;
+            max-width: none !important;
+            width: auto !important;
+        }
+    }
+    /* ===== Overrides: Equal height & Larger VIP Corner ===== */
+    .layout{align-items:stretch}
+    .holo-panel, .dock{height:100%}
+    .holo-panel{display:flex; flex-direction:column}
+    /* (disabled) .vip-corner{width:100%; bottom:12px; justify-self:stretch; padding:16px} */
+    .vip-corner h3{font-size:16px}
+    .vipc-stats{font-size:14px}
+    .vipc-actions .iconbtn{width:46px; height:46px; border-radius:14px}
+
+  
+    /* ===== VIP Corner · fixed to viewport (bottom-right) with refreshed UI ===== */
+    .vip-corner{
+      position:fixed; right:16px; bottom:16px; z-index:9;
+      width:380px; max-width:42vw;
+      background:linear-gradient(180deg, rgba(9,15,20,.92), rgba(9,15,20,.86));
+      border:1px solid hsla(var(--hue) 90% 55% /.35);
+      border-radius:20px; padding:14px 14px 12px;
+      box-shadow:0 12px 40px rgba(0,0,0,.55), 0 0 40px hsla(var(--hue) 90% 55% /.18), inset 0 0 0 1px rgba(255,255,255,.04);
+      backdrop-filter: blur(10px) saturate(115%);
+    }
+    .vip-corner h3{
+      margin:0 0 10px; font-size:16px; letter-spacing:.16em; text-transform:uppercase;
+      display:flex; align-items:center; gap:10px;
+    }
+    .vipc-head-icon{width:18px; height:18px; border-radius:6px;
+      background:conic-gradient(from 220deg, var(--brand), transparent 40%, var(--brand));
+      box-shadow:0 0 10px hsla(var(--hue) 90% 55% /.45);
+      border:1px solid rgba(246,226,122,.35);
+    }
+    .vipc-grid{display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start}
+    .vipc-stats{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+    .vipc-kv{display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid hsla(var(--hue) 90% 55% /.22); border-radius:12px; padding:8px 10px; min-height:38px;
+    }
+    .vipc-kv b{opacity:.85}
+    .vipc-kv code{font-variant-numeric:tabular-nums; opacity:.95}
+    .vipc-actions{display:grid; grid-auto-flow:row; gap:8px}
+    .vipc-actions .iconbtn{width:44px; height:44px; border-radius:14px}
+    /* Lift the floating VIP quick panel a bit so it doesn't overlap the corner */
+    .vipdock{bottom:86px}
+    @media (max-width:1080px){
+      .vip-corner{right:12px; left:12px; max-width:none; width:auto}
+      .vipc-grid{grid-template-columns:1fr}
+      .vipc-actions{grid-auto-flow:column; justify-content:end}
+    }/* (disabled)
+
+  
+    /* ===== VIP Corner inside dock (under Control Dock), sticky at bottom ===== */
+    .vip-corner{
+      position: sticky !important;
+      right: auto !important; bottom: 14px !important; left: auto !important;
+      width: 100% !important; max-width: 100% !important;
+    }
+    
+*/
+/* Floating quick panel back to default bottom so they won't collide */
+    .vipdock{ bottom: 16px !important; }
+
+  
+/* VIP Corner — fixed at bottom-right (final override) */
+.vip-corner{
+  position: fixed !important;
+  right: 16px !important;
+  bottom: 16px !important;
+  left: auto !important;
+  z-index: 9;
+  width: 380px !important;
+  max-width: 42vw !important;
+  justify-self: auto !important;
+}
+
+  /* During live pointer move: ease instantly for smoothness */
+  .holo-panel.tilt-live{ transition: none; }
+
+/* === VIP Corner patch (2025-09-07) ===
+   Goal: VIP Corner stays immediately below Control Dock and doesn't move on scroll.
+   Implementation: make the entire .dock sticky; force .vip-corner back to normal flow.
+*/
+.dock{
+  position: sticky;
+  top: 16px;
+  align-self: start;
+}
+.dock > .vip-corner{
+  position: static !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  max-width: none !important;
+  justify-self: stretch !important;
+}
+@media (max-width:1080px){
+  .dock{ position: static; }
+}
+
+
+/* ===== Volume popover dưới nút loa + trạng thái icon khi mute ===== */
+.volwrap { position: relative; }
+.vol-pop{
+  position:absolute; right:0; bottom:48px; display:none;
+  padding:10px 12px; border-radius:14px; z-index:6;
+  background:rgba(10,16,22,.96);
+  border:1px solid hsla(var(--hue) 90% 55% /.28);
+  box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.04);
+  backdrop-filter: blur(8px);
+}
+.vol-pop.open{ display:block; }
+.iconbtn[data-act="mute"] svg .slash{ display:none; }
+.iconbtn[data-act="mute"][aria-pressed="true"] svg .slash{ display:block; }
+.iconbtn[data-act="mute"][aria-pressed="true"]{ outline:2px solid var(--brand-strong); outline-offset:2px; }
+
+
+/* Fullscreen variant: appended inside the fullscreen element */
+.video-tap-overlay.fs {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+}
+
+/* ==== BEGIN: Auto-hide controls in fullscreen (YouTube-like) ==== */
+/* Khi idle trong fullscreen: ẩn thanh công cụ (.ytbar) + tiêu đề (.vid-title) */
+.video-wrap:fullscreen[data-fs-idle="1"] .ytbar,
+.video-wrap:fullscreen[data-fs-idle="1"] .vid-title,
+.video-wrap:-webkit-full-screen[data-fs-idle="1"] .ytbar,
+.video-wrap:-webkit-full-screen[data-fs-idle="1"] .vid-title {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.video-wrap:fullscreen .ytbar,
+.video-wrap:fullscreen .vid-title,
+.video-wrap:-webkit-full-screen .ytbar,
+.video-wrap:-webkit-full-screen .vid-title {
+  transition: opacity .18s ease;
+}
+
+/* Ẩn con trỏ khi idle để nhìn “sạch” hơn */
+.video-wrap:fullscreen[data-fs-idle="1"],
+.video-wrap:-webkit-full-screen[data-fs-idle="1"] {
+  cursor: none !important;
+}
+
+/* Pseudo-fullscreen (#panel full viewport) – khi body.pfs-active */
+body.pfs-active #panel { --fs-idle: 0; }
+body.pfs-active #panel[data-fs-idle="1"] .ytbar,
+body.pfs-active #panel[data-fs-idle="1"] .vid-title {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+body.pfs-active #panel[data-fs-idle="1"] { cursor: none !important; }
+
+/* Ẩn .panel-header (nếu có) khi fullscreen idle, giữ chuyển động mượt */
+body.fs-active #panel .panel-header {
+  transition: opacity .18s ease, transform .18s ease;
+}
+body.fs-active[data-fs-idle="1"] #panel .panel-header {
+  opacity: 0 !important;
+  transform: translateY(-6px);
+  pointer-events: none !important;
+}
+/* ==== END: Auto-hide controls in fullscreen ==== */
+</style>
+<!-- assistant fullscreen patch CSS -->
+<style id="assistant-fullscreen-patch">
+/* --- Fullscreen cho toàn bộ khung video + toolbar --- */
+.video-wrap:fullscreen,
+.video-wrap:-webkit-full-screen {
+  background: #000;
+}
+
+.video-wrap:fullscreen video,
+.video-wrap:-webkit-full-screen video {
+  object-fit: contain;
+  background: #000;
+}
+
+/* Giữ thanh ytbar trong fullscreen */
+.video-wrap:fullscreen .ytbar,
+.video-wrap:-webkit-full-screen .ytbar {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Khi ở fullscreen, tăng diện tích chạm một chút */
+.video-wrap:fullscreen .scrub { height: 8px; }
+.video-wrap:fullscreen .iconbtn { width: 40px; height: 40px; }
+
+/* Trạng thái cờ để tuỳ biến thêm nếu cần */
+html.fullscreen-active { /* ví dụ: ẩn dàn bên phải nếu muốn
+  overflow:hidden;
+*/ }
+
+/* --- Pseudo-fullscreen fallback cho iOS Safari --- */
+body.pfs-active { overflow: hidden; }
+body.pfs-active #panel {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  padding: 0 !important;
+  background: #000 !important;
+}
+body.pfs-active .video-wrap { height: 100dvh; }
+body.pfs-active .ytbar { opacity: 1; pointer-events: auto; }
+
+/* === [ADDED] Keyboard highlight: vàng + pulse, non-destructive === */
+@keyframes hlPulse { from{box-shadow:0 0 0 0 rgba(246,226,122,.55)} to{box-shadow:0 0 0 18px rgba(246,226,122,0)} }
+.hl-gold{
+  outline:2px solid var(--brand-gold, #f6e27a) !important;
+  outline-offset:2px;
+  animation: hlPulse .9s ease-out;
+}
+.scrub.hl-gold .prog{ filter: drop-shadow(0 0 6px var(--brand-gold, #f6e27a)); }
+
+/* Help overlay (Shift + ?) */
+#ytHelpOverlay{
+  position:fixed; inset:0; z-index:9999; display:none;
+  place-items:center; background:rgba(0,0,0,.65);
+}
+#ytHelpOverlay.open{ display:grid }
+#ytHelpOverlay .panel{
+  max-width:min(880px, 92vw); color:var(--text, #E6E6E6);
+  background:linear-gradient(180deg, rgba(9,15,20,.96), rgba(9,15,20,.90));
+  border:1px solid hsla(var(--hue, 44) 90% 55% /.35); border-radius:18px; padding:16px 18px;
+  box-shadow:0 28px 80px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.04);
+}
+#ytHelpOverlay h3{ margin:0 0 10px; letter-spacing:.14em; text-transform:uppercase; font-size:15px }
+#ytHelpOverlay .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px }
+#ytHelpOverlay .item{ display:flex; gap:10px; align-items:flex-start; background:rgba(255,255,255,.03);
+  border:1px solid hsla(var(--hue, 44) 90% 55% /.22); border-radius:12px; padding:10px }
+#ytHelpOverlay kbd{
+  font:600 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18);
+  border-radius:8px; padding:6px 8px; display:inline-block; min-width:32px; text-align:center;
+}
+#ytHelpOverlay .close{ margin-top:10px; display:flex; justify-content:flex-end }
+#ytHelpOverlay .close button{
+  border:1px solid hsla(var(--hue, 44) 90% 55% /.28); background:rgba(255,255,255,.06);
+  color:var(--text, #E6E6E6); border-radius:10px; padding:8px 10px; cursor:pointer;
+}
+@media (max-width:720px){ #ytHelpOverlay .grid{ grid-template-columns:1fr } }
+</style>
+
+
+<style id="assistant-menu-refresh">
+/* === Assistant patch: ⋮ menu refresh (no volume row) === */
+.more-menu{background:rgba(9,15,20,.96); border-radius:16px; padding:12px; min-width:240px}
+.more-menu .row{padding:10px 8px; border-radius:14px}
+.more-menu .row + .row{margin-top:10px}
+.more-menu .label{font-size:12px; letter-spacing:.12em; text-transform:uppercase; opacity:.95; color:#d8efe7; margin-bottom:8px}
+.more-menu .speed-grid{display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:8px}
+.more-menu .speed-grid button{
+  border:1px solid hsla(var(--hue) 90% 55% /.32);
+  border-radius:12px; padding:8px 0; cursor:pointer; font-weight:900;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+.more-menu .speed-grid button[aria-checked="true"]{
+  outline:2px solid var(--brand-strong);
+  background:rgba(246,226,122,.16);
+}
+.more-menu .toggles .iconbtn{
+  width:100%; height:44px; border-radius:14px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px;
+}
+</style>
+
+
+<style id="assistant-menu-prochips">
+/* === Assistant: premium speed chips (scoped to ⋮ menu) === */
+.more-menu{--chip-h:44px; --chip-r:14px; --chip-bg:rgba(255,255,255,.045); --chip-brd:rgba(255,255,255,.08);
+           --chip-hover:rgba(255,255,255,.08); --chip-active:rgba(255,255,255,.11);
+           --chip-ring:#38f4b8; --chip-glow: rgba(56,244,184,.35);
+           --txt:#eaf6f2; --txt-dim:#d1e7e0; --txt-strong:#ffffff;}
+.more-menu .label{letter-spacing:.14em;font-weight:800;color:var(--txt-dim)}
+.more-menu .speed-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.more-menu .speed-grid button{
+  appearance:none; -webkit-appearance:none; border:0; position:relative;
+  height:var(--chip-h); border-radius:var(--chip-r);
+  padding:0 10px; font-weight:900; font-size:14px; line-height:1;
+  color:var(--txt); background:var(--chip-bg);
+  backdrop-filter:saturate(120%) blur(6px);
+  border:1px solid var(--chip-brd);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06),
+              0 2px 8px rgba(0,0,0,.45);
+  transition: background .15s ease, transform .08s ease, box-shadow .15s ease, color .15s ease, outline-color .15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.more-menu .speed-grid button:hover{ background:var(--chip-hover); }
+.more-menu .speed-grid button:active{ transform: translateY(1px) scale(.98); background:var(--chip-active); }
+.more-menu .speed-grid button:focus-visible{
+  outline:2px solid var(--chip-ring); outline-offset:2px;
+  box-shadow: 0 0 0 4px rgba(56,244,184,.18);
+}
+/* Selected chip */
+.more-menu .speed-grid button[aria-checked="true"]{
+  color:var(--txt-strong);
+  background:linear-gradient(180deg, rgba(56,244,184,.14), rgba(56,244,184,.05)) padding-box,
+             linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06)) border-box;
+  border-color: rgba(56,244,184,.55);
+  box-shadow:
+     0 10px 24px var(--chip-glow),
+     inset 0 1px 0 rgba(255,255,255,.25);
+}
+/* Subtle inner glow ring */
+.more-menu .speed-grid button[aria-checked="true"]::after{
+  content:""; position:absolute; inset:-2px;
+  border-radius:calc(var(--chip-r) + 2px);
+  box-shadow:0 0 0 2px var(--chip-ring) inset, 0 0 24px var(--chip-glow);
+  pointer-events:none; opacity:.9;
+}
+/* PiP/CC buttons keep the refreshed look but slightly upgraded */
+.more-menu .toggles .iconbtn{
+  height:46px; font-weight:900;
+  background:var(--chip-bg); border:1px solid var(--chip-brd);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 2px 8px rgba(0,0,0,.45);
+}
+.more-menu .toggles .iconbtn:hover{ background:var(--chip-hover); }
+.more-menu .toggles .iconbtn:active{ transform: translateY(1px) scale(.98); }
+@media (prefers-reduced-motion: reduce){
+  .more-menu .speed-grid button,.more-menu .toggles .iconbtn{ transition:none }
+}
+</style>
+
+
+<style id="assistant-menu-speed-slider">
+/* === Assistant: Compact speed slider for ⋮ menu === */
+.more-menu .speed-slider-row{padding:8px 6px;border-radius:12px}
+.more-menu .speed-slider{padding:6px 4px 10px 4px}
+.more-menu .speed-slider .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.more-menu .speed-slider .custom{font-weight:800;opacity:.9;letter-spacing:.04em}
+.more-menu .speed-slider .val{font-weight:900;font-size:18px}
+.more-menu input.speed-range{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:999px;
+  background:linear-gradient(90deg, rgba(56,244,184,.85), rgba(56,244,184,.25));
+  outline:none;
+}
+.more-menu input.speed-range::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:16px; height:16px; border-radius:50%;
+  background:#fff; border:2px solid #1c262e; box-shadow:0 2px 6px rgba(0,0,0,.45);
+  cursor:pointer;
+}
+.more-menu input.speed-range::-moz-range-thumb{
+  width:16px; height:16px; border-radius:50%;
+  background:#fff; border:2px solid #1c262e; box-shadow:0 2px 6px rgba(0,0,0,.45); cursor:pointer;
+}
+.more-menu .speed-slider .marks{display:flex;justify-content:space-between; margin-top:8px; font-variant-numeric:tabular-nums; opacity:.85}
+.more-menu .speed-slider .marks span{font-size:12px}
+/* hide original grid row gracefully via a class we add in JS */
+.more-menu .row.hidden-by-slider{display:none !important}
+</style>
+
+
+<!-- injected: video overlay feedback styles -->
+<style>
+/* Non-invasive overlay feedback for video play/pause */
+.video-tap-overlay {
+  position: fixed;
+  left: 0; top: 0;
+  width: 0; height: 0; /* will be set inline */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2147483647;
+  opacity: 0;
+  animation: vto-fade 300ms ease forwards;
+}
+.video-tap-overlay .bubble {
+  width: 96px; height: 96px;
+  border-radius: 9999px;
+  background: rgba(0,0,0,0.38); /* xám nhạt */
+  display: flex; align-items: center; justify-content: center;
+}
+/* Play icon (white triangle) */
+.video-tap-overlay .icon.play {
+  width: 0; height: 0;
+  border-left: 30px solid #fff;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  margin-left: 4px;
+}
+/* Pause icon (two white bars) */
+.video-tap-overlay .icon.pause {
+  position: relative;
+  width: 40px; height: 40px;
+}
+.video-tap-overlay .icon.pause:before,
+.video-tap-overlay .icon.pause:after {
+  content: "";
+  position: absolute; top: 0; bottom: 0;
+  width: 12px; background: #fff;
+  border-radius: 2px;
+}
+.video-tap-overlay .icon.pause:before { left: 0; }
+.video-tap-overlay .icon.pause:after  { right: 0; }
+
+@keyframes vto-fade {
+  0%   { opacity: 0; transform: scale(0.95); }
+  15%  { opacity: 1; transform: scale(1);    }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+</style>
+
+
+<style id="vip-corner-no-audio">
+  /* Hide only the audio/mute element inside VIP Corner */
+  .vip-corner #acMute,
+  .vip-corner [data-action="mute"],
+  .vip-corner .btn-audio,
+  .vip-corner [title*="âm thanh" i],
+  .vip-corner [aria-label*="âm thanh" i],
+  .vip-corner [title*="mute" i],
+  .vip-corner [aria-label*="mute" i]{
+    display: none !important;
+  }
+</style>
+
+<style>
+
+.orb-wrap { position: relative; }
+#spectrum { position: absolute; z-index: 2; pointer-events: none; }
+#magicOrb { position: relative; z-index: 1; }
+</style>
+
+<style>
+
+#spectrum{ pointer-events:none; position:absolute; inset:0; z-index:3; mix-blend-mode:screen; }
+.orb-wrap{ position:relative; }
+.cap-dot{ display:none } /* placeholder for future DOM caps */
+</style>
+
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="grid-bg"></div>
+  <div class="orb-bg"></div>
+  <div class="dim-layer" id="dimLayer" aria-hidden="true"></div>
+
+  <div class="shell" data-endpoint="INTERNET">
+    <header class="topbar" aria-label="Thanh tiêu đề">
+      <div class="brand">
+        <a href="DD-VH.html"><div class="logo" aria-hidden="true"></div></a>
+        <h1>CyberCare – BẢO VỆ KHÔNG GIAN MẠNG</h1>
+      </div>
+      <div class="presetbar">
+        <button class="chipbtn" data-preset="145">Emerald</button>
+        <button class="chipbtn" data-preset="205">Cyber Blue</button>
+        <button class="chipbtn" data-preset="275">Royal Purple</button>
+        <label class="chipbtn" style="display:flex;gap:8px;align-items:center">
+          <span style="opacity:.8">Hue</span>
+          <input class="hue" type="range" min="0" max="360" value="145" aria-label="Hue"/>
+        </label>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT · PLAYER -->
+      <section class="holo-panel" id="panel">
+        <div class="panel-header">
+          <span class="badge">Góc nhìn 360° về không gian mạng</span>
+          <span class="muted">Nguồn dữ liệu: <code id="endpointLabel">INTERNET</code></span>
+        </div>
+
+        <div class="video-wrap">
+          <video id="video" playsinline preload="metadata" aria-label="Video công nghệ" crossOrigin="anonymous"></video>
+
+          <!-- VIP‑Pro Toolbar -->
+          <div class="ytbar">
+            <div class="ytbar-inner">
+              <div class="scrub" id="scrub" aria-label="Thanh tua">
+                <div class="buf" id="buf"></div>
+                <div class="prog" id="prog"></div>
+                <div class="knob" id="knob"></div>
+              </div>
+              <div class="buttons">
+                <div class="left">
+                  <button class="iconbtn" data-act="prev" aria-label="Video trước" title="Trước">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 5v14M20 6l-9 6 9 6V6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="iconbtn" data-act="play" aria-label="Phát/Tạm dừng" title="Phát/Tạm dừng">
+                    <svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+                  </button>
+                  <button class="iconbtn" data-act="next" aria-label="Video kế" title="Kế">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 5v14M4 6l9 6-9 6V6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+                <div class="right">
+                  <div class="timecode"><span id="cur">00:00</span> / <span id="dur">00:00</span></div>
+
+                  <!-- ⋮ More groups Speed + Volume (vertical) + PiP + CC -->
+                  
+<div class="volwrap">
+  <button class="iconbtn" data-act="mute" id="muteBtn" aria-pressed="false"
+          aria-label="Tắt tiếng" title="Âm thanh">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M4 9v6h4l5 4V5L8 9H4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="waves" d="M16 8c1.5 1.2 2.5 2.8 2.5 4s-1 2.8-2.5 4"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="slash" d="M3 3 L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div class="vol-pop" id="volPop">
+    <div class="vstack">
+      <div class="vbar" id="vbar2">
+        <div class="vf" id="vf2"></div>
+        <div class="vknob" id="vknob2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="more">
+                    <button class="iconbtn" id="moreBtn" aria-label="Tùy chọn" title="Tùy chọn (⋮)">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                    </button>
+                    <div class="more-menu" id="moreMenu" role="menu">
+                      <div class="row">
+                        <div class="label">Tốc độ</div>
+                        <div class="speed-grid" id="speedGrid">
+                          <button role="menuitemradio" data-rate="0.75">0.75×</button>
+                          <button role="menuitemradio" data-rate="1" aria-checked="true">1×</button>
+                          <button role="menuitemradio" data-rate="1.25">1.25×</button>
+                          <button role="menuitemradio" data-rate="1.5">1.5×</button>
+                          <button role="menuitemradio" data-rate="2">2×</button>
+                        </div>
+                      </div>
+                      
+                      <div class="row" id="qualityRow" style="display:none"><div class="label">Chất lượng</div><div class="speed-grid" id="qualityGrid"></div></div><div class="row toggles">
+                        <button class="iconbtn" data-act="pip" style="width:100%" title="Picture-in-Picture">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><rect x="12" y="9" width="7" height="5" rx="1" fill="currentColor"/></svg>
+                          &nbsp;PiP
+                        </button>
+                        <div style="height:6px"></div>
+                        <button class="iconbtn" data-act="cc" style="width:100%" title="Phụ đề">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M21 6H3a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Zm-7.5 6c0-1.2-.8-2-2-2s-2 .8-2 2 .8 2 2 2 2-.8 2-2Zm7 0c0-1.2-.8-2-2-2s-2 .8-2 2 .8 2 2 2 2-.8 2-2Z"/></svg>
+                          &nbsp;CC
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="iconbtn" data-act="full" aria-label="Toàn màn hình" title="Toàn màn hình">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3m0 6v3a2 2 0 0 0 2 2h3m8-16h3a2 2 0 0 1 2 2v3m0 6v3a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="listbar">
+          <div class="muted" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:6px"><input id="autoplaySwitch" type="checkbox" checked> Tự động phát video khi chuyển tin</label>
+          </div>
+        </div>
+        <div class="playlist" id="playlist" aria-label="Danh sách video">
+          <div class="thumb"><span class="badge">#1</span><div class="meta">Đang tải…</div></div>
+          <div class="thumb"><span class="badge">#2</span><div class="meta">Đang tải…</div></div>
+          <div class="thumb"><span class="badge">#3</span><div class="meta">Đang tải…</div></div>
+        
+        <section id="guideSection" class="guide-table" aria-labelledby="gtitle">
+          <h2 id="gtitle">KHUYẾN NGHỊ</h2>
+          <table aria-describedby="gdesc">
+            <caption id="gdesc" class="sr-only">Bảng hướng dẫn NÊN / KHÔNG NÊN cho trình phát VIP-Pro</caption>
+            <thead>
+              <tr>
+                <th scope="col">NÊN</th>
+                <th scope="col">KHÔNG NÊN</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="ok"><b>Bảo mật tài khoản: </b>Sử dụng mật khẩu mạnh, bật xác thực hai lớp</td>
+                <td class="no"><b>Không nhấp vào link lạ: </b>Tránh truy cập các đường dẫn không rõ nguồn gốc</td>
+              </tr>
+              <tr>
+                <td class="ok"><b>Chia sẻ có chọn lọc: </b>Kiểm tra kỹ trước khi đăng tải thông tin cá nhân, hình ảnh.</td>
+                <td class="no"><b>Không tung tin giả: </b>Hạn chế chia sẻ thông tin chưa được kiểm chứng.</td>
+              </tr>
+              <tr>
+                <td class="ok"><b>Ứng xử văn minh: </b>Tôn trọng người khác, tuân thủ pháp luật và chuẩn mực cộng đồng.</td>
+                <td class="no"><b>Không lạm dụng mạng: </b>Tránh dành quá nhiều thời gian online gây ảnh hưởng học tập, công việc, sức khỏe.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section>
+
+      <!-- RIGHT · ORB & CONTROLS -->
+      <aside class="dock">
+        <section class="card">
+          <h2>MYSTIC ORB – QUẢ CẦU HUYỀN BÍ</h2>
+          <div class="orb-wrap">
+            <canvas id="spectrum" width="520" height="520" aria-hidden="true"></canvas>
+            <div class="magic-orb" id="magicOrb" aria-label="Quả cầu ma thuật"></div>
+          </div>
+          <div class="orb-caption">Hiển thị dải sóng âm (audio spectrum) trực tiếp từ video đang phát</div>
+        </section>
+
+        <section class="card" aria-labelledby="ctlTitle">
+          <h2 id="ctlTitle">TRUNG TÂM ĐIỀU KHIỂN</h2>
+          <div class="controls-grid">
+            <fieldset class="fieldset">
+              <legend>Vũ trụ</legend>
+              <label style="display:flex;justify-content:space-between;gap:8px;margin:6px 0">Sao nền
+                <input id="starsInt" type="range" min="0" max="1" step="0.05" value="0.55" style="width:160px">
+              </label>
+              <label style="display:flex;justify-content:space-between;gap:8px;margin:6px 0">Lưới tech
+                <input id="gridMask" type="range" min="0" max="1" step="0.05" value="1" style="width:160px">
+              </label>
+            </fieldset>
+            <fieldset class="fieldset">
+              <legend>Trình phát</legend>
+              <label style="display:flex;justify-content:space-between;gap:8px;margin:6px 0">Âm lượng mặc định
+                <input id="defaultVol" type="range" min="0" max="1" step="0.05" value="1" style="width:160px">
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;margin:6px 0"><input id="ccDefault" type="checkbox" checked> Bật phụ đề VI mặc định</label>
+            </fieldset>
+          </div>
+        </section>
+
+      
+        <section class="vip-corner" aria-labelledby="vipCornerTitle">
+          <h3 id="vipCornerTitle"><span class="vipc-head-icon" aria-hidden="true"></span> SỐ LIỆU MEDIA </h3>
+          <div class="vipc-grid">
+            <div class="vipc-stats" id="vipStats">
+              <div class="vipc-kv"><span>Độ phân giải</span><code id="stRes">—</code></div>
+              <div class="vipc-kv"><span>Tốc độ khung</span><code id="stFps">—</code></div>
+              <div class="vipc-kv"><span>Khung rơi</span><code id="stDrop">—</code></div>
+              <div class="vipc-kv"><span>Tốc độ phát</span><code id="stRate">—</code></div>
+            </div>
+            <div class="vipc-actions">
+              <button class="iconbtn" id="acMute" title="Mute/Unmute">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4z" stroke="currentColor" stroke-width="2"/></svg>
+              </button>
+              <button class="iconbtn" id="acPip" title="PiP">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><rect x="12" y="9" width="7" height="5" rx="1" fill="currentColor"/></svg>
+              </button>
+              <button class="iconbtn" id="acExport" title="Export JSON playlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4 4-4M5 15v4h14v-4" stroke="currentColor" stroke-width="2"/></svg>
+              </button>
+              <button class="iconbtn" id="acEmbed" title="Copy mã nhúng">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </aside>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" style="position:fixed; top:14px; right:14px; background:rgba(0,0,0,.6); border:1px solid hsla(var(--hue) 90% 55% /.35); color:var(--text); padding:10px 12px; border-radius:10px; z-index:5; display:none"></div>
+
+  <script>
+    /* ========= Theme ========= */
+    const root = document.documentElement;
+    document.querySelectorAll('[data-preset]')?.forEach(btn=>btn.addEventListener('click',()=>{
+      root.style.setProperty('--hue', btn.dataset.preset);
+    }));
+    document.querySelector('.hue')?.addEventListener('input', e=> root.style.setProperty('--hue', e.target.value));
+    document.getElementById('starsInt')?.addEventListener('input', e=> root.style.setProperty('--stars', e.target.value));
+    document.getElementById('gridMask')?.addEventListener('input', e=> root.style.setProperty('--gridMask', e.target.value));
+
+    /* ========= Elements ========= */
+    const wrap = document.querySelector('.shell');
+    const PLAYLIST_ENDPOINT = wrap?.dataset.endpoint || 'INTERNET';
+    document.getElementById('endpointLabel').textContent = PLAYLIST_ENDPOINT;
+    const video = document.getElementById('video');
+    video.controls = false;
+
+    // Toolbar elements
+    const playBtn = document.querySelector('[data-act="play"]');
+    const prevBtn = document.querySelector('[data-act="prev"]');
+    const nextBtn = document.querySelector('[data-act="next"]');
+    const fullBtn = document.querySelector('[data-act="full"]');
+    const cur = document.getElementById('cur');
+    const dur = document.getElementById('dur');
+    const scrub = document.getElementById('scrub');
+    const buf = document.getElementById('buf');
+    const prog = document.getElementById('prog');
+    const knob = document.getElementById('knob');
+    const moreBtn = document.getElementById('moreBtn');
+    const moreMenu = document.getElementById('moreMenu');
+    const speedGrid = document.getElementById('speedGrid');
+    const vbar = document.getElementById('vbar');
+    const vfill = document.getElementById('vf');
+    const vknob = document.getElementById('vknob');
+
+    const playlistEl = document.getElementById('playlist');
+    const toast = document.getElementById('toast');
+    const autoplaySwitch = document.getElementById('autoplaySwitch');
+    const ccDefault = document.getElementById('ccDefault');
+    const defaultVol = document.getElementById('defaultVol');
+
+    /* ========= Backend JSON fetch ========= */
+    let videos = [];
+    async function loadPlaylist(){
+      try{
+        const res = await fetch(PLAYLIST_ENDPOINT, {cache:'no-store'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const data = await res.json();
+        if(!Array.isArray(data.videos)) throw new Error('JSON thiếu mảng "videos"');
+        videos = data.videos;
+        buildPlaylist(); loadVideo(0, false);
+        showToast('Đã tải danh sách từ JSON.');
+      }catch(e){
+        showToast('Không tải được JSON: '+e.message+' • Dùng dữ liệu demo.');
+        // fallback demo
+        videos = [
+        {
+          "src": "-Vaccine- để trẻ em bảo vệ mình trên không gian mạng - VTV4.mp4",
+          "title": "Vaccine để trẻ em bảo vệ mình trên không gian mạng",
+          "poster": "https://tuyenquang.dcs.vn/Image/Large/2022112875729_114662.jpg",
+          "tracks": [
+            {
+              "src": "video1.vi.vtt",
+              "srclang": "vi",
+              "label": "Tiếng Việt",
+              "default": true
+            }
+          ]
+        },
+        {
+          "src": "Tiêu điểm- Bảo vệ trẻ em trên không gian mạng - VTV24.mp4",
+          "title": "Tiêu điểm bảo vệ trẻ em trên không gian mạng",
+          "poster": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/khong_gian_mang_la_gi_1_9eba0c493c.png",
+          "tracks": [
+            {
+              "src": "video1.vi.vtt",
+              "srclang": "vi",
+              "label": "Tiếng Việt",
+              "default": true
+            }
+          ]
+        },
+        {
+          "src": "LỢI ÍCH - TÁC HẠI - SỬ DỤNG MẠNG XÃ HỘI AN TOÀN VÀ HIỆU QUẢ.mp4",
+          "title": "Lợi ích, tác hại & sử dụng mạng xã hội an toàn và hiệu quả",
+          "poster": "https://cdnv2.tgdd.vn/mwg-static/common/News/1571187/2.jpg",
+          "tracks": [
+            {
+              "src": "video1.vi.vtt",
+              "srclang": "vi",
+              "label": "Tiếng Việt",
+              "default": true
+            }
+          ]
+        }
+        ];
+        buildPlaylist(); loadVideo(0, false);
+      }
+    }
+
+    /* ========= Playlist & Player ========= */
+    function buildPlaylist(){
+      playlistEl.innerHTML='';
+      videos.forEach((v,i)=>{
+        const item=document.createElement('button'); item.className='thumb'; item.type='button'; item.dataset.index=i;
+        item.innerHTML = `<span class="badge">#${i+1}</span>${v.poster?`<img loading="lazy" src="${v.poster}" alt="${v.title||('Video '+(i+1))}">`:''}<div class="meta">${v.title||('Video '+(i+1))}</div>`;
+        item.addEventListener('click', ()=> loadVideo(i, autoplaySwitch.checked));
+        playlistEl.appendChild(item);
+      });
+    }
+    function fmt(t){ if(!isFinite(t)) return '00:00'; const m=Math.floor(t/60).toString().padStart(2,'0'); const s=Math.floor(t%60).toString().padStart(2,'0'); return `${m}:${s}`; }
+    function updateTime(){
+      cur.textContent = fmt(video.currentTime); dur.textContent = fmt(video.duration);
+      const ratio = (video.currentTime/(video.duration||1));
+      prog.style.width = (ratio*100)+'%'; knob.style.left = (ratio*100)+'%';
+      if(video.buffered && video.buffered.length){
+        const end = video.buffered.end(video.buffered.length-1);
+        const br = Math.min(end/(video.duration||1),1);
+        buf.style.width = (br*100)+'%';
+      }
+    }
+    function setActiveThumb(i){ Array.from(playlistEl.children).forEach((el, idx)=> el.classList.toggle('active', idx===i)); }
+    function clearTracks(){ [...video.querySelectorAll('track, source')].forEach(n=>n.remove()); }
+    let currentIndex = 0;
+    function loadVideo(index, autoplay=false){
+      currentIndex = (index+videos.length)%videos.length;
+      const v = videos[currentIndex] || {};
+      clearTracks();
+      video.poster = v.poster||'';
+      if (Array.isArray(v.sources) && v.sources.length){
+        v.sources.forEach(srcObj=>{ const s=document.createElement('source'); s.src=srcObj.src; if(srcObj.type) s.type=srcObj.type; video.appendChild(s); });
+      } else {
+        const s = document.createElement('source'); s.src = v.src||''; s.type = (v.type || (String(v.src||'').endsWith('.webm')? 'video/webm':'video/mp4')); video.appendChild(s);
+      }
+      (v.tracks||[])?.forEach(t=>{ const tr=document.createElement('track'); tr.src=t.src; tr.srclang=t.srclang; tr.label=t.label; if(t.default) tr.default=true; video.appendChild(tr); });
+      buildQualityMenu(v);
+      video.load();
+      video.volume = parseFloat(defaultVol.value||'1');
+      video.addEventListener('loadedmetadata', ()=>{ updateTime(); applyCCDefault(); updateCCState(); }, {once:true});
+      if(autoplay) video.play().then(()=> reflectPlayIcon()).catch(()=>{}); else reflectPlayIcon();
+      setActiveThumb(currentIndex);
+      setVolumeUI(video.volume);
+      initAudio(); // rebind analyser
+      try{ setTitle(v.title||''); }catch(e){}
+    }
+
+    // ===== time & progress
+    video.addEventListener('timeupdate', updateTime);
+    video.addEventListener('progress', updateTime);
+    video.addEventListener('loadedmetadata', updateTime);
+
+    // ===== play/pause
+    function reflectPlayIcon(){
+      const el = document.getElementById('playIcon');
+      if(video.paused){ el.outerHTML = '<svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>'; }
+      else { el.outerHTML = '<svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>'; }
+    }
+    playBtn.addEventListener('click', ()=>{ if(video.paused){ video.play(); } else { video.pause(); } reflectPlayIcon(); });
+    video.addEventListener('play', reflectPlayIcon);
+    video.addEventListener('pause', reflectPlayIcon);
+
+    
+      try{ video.addEventListener('play', ()=>{ try{ audioCtx?.resume?.(); }catch{} }); }catch{}
+// ===== seek scrubbing
+    let isScrubbing=false;
+    function posToTime(clientX){
+      const r = scrub.getBoundingClientRect();
+      const ratio = Math.min(Math.max(0,(clientX-r.left)/r.width),1);
+      return ratio*(video.duration||0);
+    }
+    function handleDown(e){
+      isScrubbing=true; document.body.classList.add('scrubbing');
+      video.pause();
+      const x = (e.touches? e.touches[0].clientX : e.clientX);
+      const t = posToTime(x); video.currentTime = t; updateTime();
+    }
+    function handleMove(e){
+      if(!isScrubbing) return;
+      const x = (e.touches? e.touches[0].clientX : e.clientX);
+      const t = posToTime(x); video.currentTime = t; updateTime();
+    }
+    function handleUp(){
+      if(!isScrubbing) return;
+      isScrubbing=false; document.body.classList.remove('scrubbing');
+      video.play(); reflectPlayIcon();
+    }
+    scrub.addEventListener('mousedown', handleDown);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    scrub.addEventListener('touchstart', handleDown, {passive:true});
+    window.addEventListener('touchmove', handleMove, {passive:true});
+    window.addEventListener('touchend', handleUp);
+
+    // ===== ⋮ menu toggle
+    moreBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const open = moreMenu.classList.toggle('open');
+      moreBtn.setAttribute('aria-expanded', open?'true':'false');
+    });
+    document.addEventListener('click', (e)=>{
+      if(!moreMenu.contains(e.target) && e.target!==moreBtn){ moreMenu.classList.remove('open'); moreBtn.setAttribute('aria-expanded','false'); }
+    });
+
+    // ===== speed radio
+    function setRate(r){
+      video.playbackRate = r;
+      speedGrid.querySelectorAll('button').forEach(b=> b.setAttribute('aria-checked', b.dataset.rate==r ? 'true':'false'));
+      showToast('Tốc độ: '+r+'×');
+    }
+    speedGrid.querySelectorAll('button').forEach(b=> b.addEventListener('click', ()=> setRate(parseFloat(b.dataset.rate)) ));
+
+    // ===== vertical volume
+    if (vbar) {
+    function setVolumeUI(v){
+      v = Math.max(0, Math.min(1, v));
+      video.volume = v; video.muted = (v===0);
+      const H = (vbar && vbar.clientHeight) ? vbar.clientHeight : 110;
+      if (typeof vfill !== 'undefined' && vfill) vfill.style.height = (v*H)+'px';
+      if (typeof vknob !== 'undefined' && vknob) vknob.style.top = (100 - v*100) + '%';
+    }
+    function volFromEventY(clientY){
+      const r = vbar.getBoundingClientRect();
+      const ratio = 1 - Math.min(Math.max(0,(clientY - r.top)/r.height), 1);
+      return ratio;
+    }
+    let vdrag=false;
+    vbar.addEventListener('mousedown', (e)=>{ vdrag=true; setVolumeUI(volFromEventY(e.clientY)); });
+    window.addEventListener('mousemove', (e)=>{ if(vdrag){ setVolumeUI(volFromEventY(e.clientY)); } });
+    window.addEventListener('mouseup', ()=> vdrag=false);
+    vbar.addEventListener('touchstart', (e)=>{ vdrag=true; setVolumeUI(volFromEventY(e.touches[0].clientY)); }, {passive:true});
+    window.addEventListener('touchmove', (e)=>{ if(vdrag){ setVolumeUI(volFromEventY(e.touches[0].clientY)); } }, {passive:true});
+    window.addEventListener('touchend', ()=> vdrag=false);
+    vbar.addEventListener('wheel', (e)=>{ e.preventDefault(); const delta = e.deltaY>0 ? -0.05 : 0.05; setVolumeUI(video.volume + delta); }, {passive:false});
+
+    
+    }
+// ===== PiP, CC, Fullscreen
+    document.querySelectorAll('[data-act="pip"]').forEach(btn=> btn.addEventListener('click', async ()=>{
+      try{ if(document.pictureInPictureElement) await document.exitPictureInPicture(); else if(document.pictureInPictureEnabled) await video.requestPictureInPicture(); }catch(e){ showToast('PiP không khả dụng'); }
+    }));
+    function applyCCDefault(){
+      for (const track of video.textTracks){
+        const isVI=((track.language||'').toLowerCase()==='vi') || /vi/i.test(track.label||'');
+        track.mode = (ccDefault?.checked && isVI) ? 'showing' : 'disabled';
+      }
+    }
+    function updateCCState(){
+      const hasVI=[...video.textTracks].some(t=> ((t.language||'').toLowerCase()==='vi') || /vi/i.test(t.label||''));
+      document.querySelectorAll('[data-act="cc"]').forEach(btn=> btn.disabled = !hasVI);
+    }
+    document.querySelectorAll('[data-act="cc"]').forEach(btn=> btn.addEventListener('click', ()=>{
+      let showing=false;
+      for (const track of video.textTracks){
+        const isVI=((track.language||'').toLowerCase()==='vi') || /vi/i.test(track.label||'');
+        if(isVI){ track.mode = (track.mode==='showing' ? 'disabled':'showing'); showing = (track.mode==='showing'); }
+        else { track.mode='disabled'; }
+      }
+      showToast(showing? 'Đã bật phụ đề VI':'Đã tắt phụ đề VI');
+    }));
+    
+// --- Assistant patch: Fullscreen giữ UI + fallback iOS ---
+(function(){
+  const containerFS = document.querySelector('.video-wrap');
+  const isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent)
+    || (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+
+  async function enterNativeFS(){
+    if (!containerFS) return;
+    if (containerFS.requestFullscreen) return containerFS.requestFullscreen();
+    if (containerFS.webkitRequestFullscreen) return containerFS.webkitRequestFullscreen(); // Safari macOS
+  }
+
+  async function exitNativeFS(){
+    if (document.fullscreenElement && document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitFullscreenElement && document.webkitCancelFullScreen) return document.webkitCancelFullScreen();
+  }
+
+  function enterPseudoFS(){
+    document.body.classList.add('pfs-active');
+    document.documentElement.classList.add('fullscreen-active');
+  }
+  function exitPseudoFS(){
+    document.body.classList.remove('pfs-active');
+    document.documentElement.classList.remove('fullscreen-active');
+  }
+
+  async function toggleFullscreen(){
+    try{
+      // iOS Safari: dùng pseudo-fullscreen để giữ UI tuỳ biến
+      if (isIOS){
+        if (document.body.classList.contains('pfs-active')) exitPseudoFS();
+        else enterPseudoFS();
+        return;
+      }
+      // Desktop & Android: native FS trên .video-wrap (bao gồm ytbar)
+      if (!(document.fullscreenElement || document.webkitFullscreenElement)){
+        await enterNativeFS();
+      } else {
+        await exitNativeFS();
+      }
+    }catch(e){ /* no-op */ }
+  }
+
+  // Gắn nút
+  document.querySelectorAll('[data-act="full"]').forEach(btn=>{
+    btn.addEventListener('click', toggleFullscreen, {passive:true});
+  });
+
+  // Gắn cờ để style khi FS
+  function syncFSFlag(){
+    const active = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    document.documentElement.classList.toggle('fullscreen-active', active);
+  }
+  document.addEventListener('fullscreenchange', syncFSFlag);
+  document.addEventListener('webkitfullscreenchange', syncFSFlag);
+
+  // Thoát pseudo-FS bằng phím ESC
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && document.body.classList.contains('pfs-active')) exitPseudoFS();
+  });
+})();
+
+// ===== Keyboard Shortcuts — YouTube‑like, flexible =====
+(function(){
+  const STEP_ARROW = 5;     // ArrowLeft/Right: ±5s
+  const STEP_JL    = 10;    // J/L: ±10s
+  const VOL_STEP   = 0.05;  // Up/Down: ±5%
+  const RATE_STEP  = 0.25;  // </>: ±0.25x
+  const FRAME_SEC  = 1/30;  // ,/. when paused: ~1 frame
+
+  function isTypingTarget(el){
+    if(!el) return false;
+    const tag = (el.tagName||'').toUpperCase();
+    if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return true;
+    if(el.isContentEditable) return true;
+    return false;
+  }
+
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+  function seekBy(sec){
+    const t = clamp((video.currentTime||0) + sec, 0, video.duration||0);
+    video.currentTime = t;
+  }
+
+  function seekToPercent(p){ // p in [0..1]
+    if(!isFinite(video.duration)) return;
+    video.currentTime = clamp(p * video.duration, 0, video.duration);
+  }
+
+  function setRate(r){
+    const newR = clamp(r, 0.25, 2.0);
+    video.playbackRate = newR;
+    try{
+      speedGrid?.querySelectorAll('button')?.forEach(b=> b.setAttribute('aria-checked', (parseFloat(b.dataset.rate)===newR)?'true':'false'));
+    }catch{}
+    try{ showToast('Tốc độ: '+newR+'×'); }catch{}
+  }
+
+  function setVolume(v){
+    const newV = clamp(v, 0, 1);
+    video.volume = newV;
+    video.muted = (newV===0);
+    try{ setVolumeUI(newV); }catch{}
+    try{ showToast('Âm lượng: '+Math.round(newV*100)+'%'+(video.muted?' (mute)':'')); }catch{}
+  }
+
+  // Help overlay (Shift + /)
+  const HELP_ID = 'ytHelpOverlay';
+  function ensureHelp(){
+    if(document.getElementById(HELP_ID)) return;
+    const div = document.createElement('div');
+    div.id = HELP_ID;
+    div.setAttribute('role','dialog');
+    div.setAttribute('aria-modal','true');
+    div.style.cssText = [
+      'position:fixed','inset:0','z-index:9999','display:none',
+      'align-items:center','justify-content:center',
+      'background:rgba(0,0,0,.65)'
+    ].join(';');
+    div.innerHTML = `
+      <div style="background:rgba(10,16,22,.96); border:1px solid hsla(var(--hue) 90% 55% /.35); border-radius:18px; padding:16px 18px; max-width:760px; width:clamp(320px,90vw,760px); color:#EFFFF5; box-shadow:0 24px 60px rgba(0,0,0,.6)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px; margin-bottom:10px">
+          <h3 style="margin:0; letter-spacing:.12em; text-transform:uppercase">Phím tắt (kiểu YouTube)</h3>
+          <button id="ytHelpClose" class="iconbtn" title="Đóng" style="width:36px;height:36px;border-radius:12px">✕</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:14px">
+          <div><b>K/Space</b> — Phát/Tạm dừng</div>
+          <div><b>J / L</b> — Lùi/Tiến 10 giây</div>
+          <div><b>← / →</b> — Lùi/Tiến 5 giây</div>
+          <div><b>, / .</b> — Từng khung khi tạm dừng (đang phát = ±5s)</div>
+          <div><b>0..9</b> — Nhảy tới 0%..90%</div>
+          <div><b>Home / End</b> — Đầu / Cuối video</div>
+          <div><b>↑ / ↓</b> — Tăng/Giảm âm lượng</div>
+          <div><b>M</b> — Mute/Unmute</div>
+          <div><b>&lt; / &gt;</b> — Giảm/Tăng tốc độ (±0.25×)</div>
+          <div><b>C</b> — Bật/Tắt phụ đề VI</div>
+          <div><b>F</b> — Toàn màn hình</div>
+          <div><b>Shift+N / Shift+P</b> — Video kế / Trước</div>
+        </div>
+      </div>`;
+    document.body.appendChild(div);
+    div.addEventListener('click', (e)=>{ if(e.target===div) hideHelp(); });
+    div.querySelector('#ytHelpClose')?.addEventListener('click', hideHelp);
+  }
+  function showHelp(){ ensureHelp(); document.getElementById(HELP_ID).style.display='flex'; }
+  function hideHelp(){ const el=document.getElementById(HELP_ID); if(el) el.style.display='none'; }
+
+  document.addEventListener('keydown', (e)=>{
+    // [merged patch] disabled legacy keydown handler to avoid double actions
+    return;
+
+    if(isTypingTarget(e.target)) return;
+
+    // Shift + / => help
+    if ((e.key === '?' ) || (e.key === '/' && e.shiftKey)){
+      e.preventDefault(); showHelp(); return;
+    }
+
+    // Play/Pause
+    if (e.code === 'Space' || e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      if(video.paused){ video.play(); } else { video.pause(); }
+      try{ reflectPlayIcon(); }catch{}
+      return;
+    }
+
+    // Fullscreen
+    if (e.key.toLowerCase() === 'f'){
+      e.preventDefault();
+      try{ document.querySelector('[data-act="full"]')?.click(); }catch{}
+      return;
+    }
+
+    // Mute
+    if (e.key.toLowerCase() === 'm'){
+      e.preventDefault();
+      video.muted = !video.muted;
+      if(!video.muted && video.volume===0) video.volume = 0.05;
+      try{ setVolumeUI(video.volume); }catch{}
+      try{ showToast(video.muted? 'Đã tắt tiếng' : 'Đã bật tiếng'); }catch{}
+      return;
+    }
+
+    // Captions
+    if (e.key.toLowerCase() === 'c'){
+      e.preventDefault();
+      try{ document.querySelector('[data-act="cc"]')?.click(); }catch{}
+      return;
+    }
+
+    // Speed </>
+    if (e.key === '>' || (e.key === '.' && e.shiftKey)){
+      e.preventDefault(); setRate((video.playbackRate||1) + RATE_STEP); return;
+    }
+    if (e.key === '<' || (e.key === ',' && e.shiftKey)){
+      e.preventDefault(); setRate((video.playbackRate||1) - RATE_STEP); return;
+    }
+
+    // Seek J/L, Arrow
+    if (e.key.toLowerCase() === 'j'){ e.preventDefault(); seekBy(-STEP_JL); return; }
+    if (e.key.toLowerCase() === 'l'){ e.preventDefault(); seekBy(+STEP_JL); return; }
+    if (e.key === 'ArrowLeft'){ e.preventDefault(); seekBy(-STEP_ARROW); return; }
+    if (e.key === 'ArrowRight'){ e.preventDefault(); seekBy(+STEP_ARROW); return; }
+
+    // Frame step when paused; else behave like ±5s to giữ linh hoạt
+    if (e.key === ','){
+      e.preventDefault();
+      if(video.paused) seekBy(-FRAME_SEC);
+      else seekBy(-STEP_ARROW);
+      return;
+    }
+    if (e.key === '.'){
+      e.preventDefault();
+      if(video.paused) seekBy(+FRAME_SEC);
+      else seekBy(+STEP_ARROW);
+      return;
+    }
+
+    // Volume
+    if (e.key === 'ArrowUp'){ e.preventDefault(); setVolume((video.muted?0:video.volume) + VOL_STEP); video.muted=false; return; }
+    if (e.key === 'ArrowDown'){ e.preventDefault(); setVolume((video.muted?0:video.volume) - VOL_STEP); return; }
+
+    // Number keys 0..9 => percent seek
+    if (/^[0-9]$/.test(e.key)){
+      e.preventDefault();
+      const d = parseInt(e.key,10);
+      seekToPercent(d===0 ? 0 : d/10);
+      return;
+    }
+
+    // Home / End
+    if (e.key === 'Home'){ e.preventDefault(); video.currentTime = 0; return; }
+    if (e.key === 'End'){ e.preventDefault(); if(isFinite(video.duration)) video.currentTime = video.duration; return; }
+
+    // Next/Prev in playlist (Shift+N/P)
+    if (e.shiftKey && e.key.toLowerCase()==='n'){ e.preventDefault(); try{ loadVideo((window.currentIndex||0)+1, true); }catch{} return; }
+    if (e.shiftKey && e.key.toLowerCase()==='p'){ e.preventDefault(); try{ loadVideo((window.currentIndex||0)-1, true); }catch{} return; }
+  });
+})();
+    // ===== Prev/Next
+    prevBtn.addEventListener('click', ()=> loadVideo(currentIndex-1, true));
+    nextBtn.addEventListener('click', ()=> loadVideo(currentIndex+1, true));
+
+    // ===== Magic Orb (Web Audio API)
+    let audioCtx, analyser, srcNode, dataArray, comp, eq, boostOn=false;
+    function initAudio(){
+      try{
+        audioCtx?.close?.();
+      }catch{}
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      
+      try{ window.audioCtx = audioCtx; }catch{}
+      try{ window.analyser = analyser; }catch{}
+analyser.fftSize = 512; // smooth
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      srcNode = audioCtx.createMediaElementSource(video);
+      comp = audioCtx.createDynamicsCompressor();
+      comp.threshold.setValueAtTime(-24, audioCtx.currentTime);
+      comp.knee.setValueAtTime(15, audioCtx.currentTime);
+      comp.ratio.setValueAtTime(6, audioCtx.currentTime);
+      comp.attack.setValueAtTime(0.003, audioCtx.currentTime);
+      comp.release.setValueAtTime(0.25, audioCtx.currentTime);
+      eq = audioCtx.createBiquadFilter(); eq.type = 'peaking'; eq.frequency.value = 2000; eq.Q.value = 0.9; eq.gain.value = 3;
+      function applyBoostRouting(){
+        try{ srcNode.disconnect(); }catch(e){}
+        try{ analyser.disconnect(); }catch(e){}
+        // Always feed analyser for spectrum
+        srcNode.connect(analyser);
+        if(boostOn){ srcNode.connect(comp); comp.connect(eq); eq.connect(audioCtx.destination); }
+        else{ srcNode.connect(audioCtx.destination); }
+      }
+      applyBoostRouting();
+      drawSpectrum();
+    }
+    const specCanvas = document.getElementById('spectrum');
+    const ctx = specCanvas.getContext('2d');
+    var __orbRays = window.__orbRays || []; // {r, a, w, alpha, rv, av}
+// === End add ===
+
+function drawSpectrum(){
+      if(!analyser) return;
+      requestAnimationFrame(drawSpectrum);
+      analyser.getByteFrequencyData(dataArray);
+
+      (function(){
+        try{
+          let maxVal = -1, peakIdx = 0;
+          const N = dataArray.length;
+          for (let i = 2; i < N; i++){
+            const v = dataArray[i];
+            if (v > maxVal){ maxVal = v; peakIdx = i; }
+          }
+          const hzPerBin = (audioCtx?.sampleRate || 44100) / (analyser?.fftSize || 512);
+          const estHz = peakIdx * hzPerBin;
+          window.__peakHz = estHz;
+          const span = document.getElementById('freqHz');
+          if (span){ 
+            // simple smoothing
+            const sm = (window.__peakHzSm = (window.__peakHzSm||0)*0.85 + estHz*0.15);
+            span.textContent = 'Đỉnh ~ ' + Math.round(sm) + ' Hz';
+          }
+          const orb = document.getElementById('magicOrb');
+          if (orb) orb.setAttribute('data-peak-hz', String(Math.round(window.__peakHz||0)));
+        }catch(e){}
+      })();
+      // === End patch ===
+
+      try{
+        // Canvas center
+        const cx = specCanvas.width/2;
+        const cy = specCanvas.height/2;
+        const baseR = Math.min(cx, cy) * 0.75; // gần mép quả cầu
+        
+        // Determine frequency (Hz) and energy
+        const hz = typeof estHzSmoothed !== 'undefined' ? estHzSmoothed : (window.__peakHzSm||window.__peakHz||0);
+        const energy = (maxVal>0?maxVal:0)/255; // 0..1
+        
+        // Spawn new rays proportional to energy (scaled by log of freq to avoid flood at high Hz)
+        const spawnN = Math.min(5, Math.max(0, Math.floor(energy*3)));
+        for(let k=0;k<spawnN;k++){
+          // angular velocity depends on Hz; radius velocity depends on energy
+          const av = (hz||0) * 0.0008 + (Math.random()*0.001);
+          const rv = 1.5 + energy*3 + Math.random()*0.5;
+          __orbRays.push({
+            r: baseR*0.7,            // start near orb edge
+            a: Math.random()*Math.PI*2, // random start angle
+            w: (Math.PI/16) * (0.6+Math.random()*0.8), // arc width
+            alpha: 0.35 + energy*0.45, // opacity
+            rv, av
+          });
+        }
+        
+        // Update & render rays
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i=__orbRays.length-1;i>=0;i--){
+          const o = __orbRays[i];
+          o.r += o.rv;
+          o.a += o.av;
+          o.alpha *= 0.96;   // fade out
+          
+          // Draw arc segment
+          ctx.beginPath();
+          ctx.lineWidth = 2 + energy*3;
+          ctx.globalAlpha = Math.max(0, Math.min(1, o.alpha));
+          ctx.arc(cx, cy, o.r, o.a - o.w/2, o.a + o.w/2);
+          ctx.strokeStyle = '#00ffb3'; // keep theme-ish (one line only; minimal change)
+          ctx.stroke();
+          
+          // remove dead rays
+          if (o.alpha < 0.03 || o.r > Math.max(specCanvas.width, specCanvas.height)){
+            __orbRays.splice(i,1);
+          }
+        }
+        ctx.restore();
+      }catch(e){}
+      // === End add ===
+
+    (function(){
+      try{
+        let maxVal = -1, peakIdx = 0;
+        const N = dataArray.length;
+        for (let i = 2; i < N; i++){
+          const v = dataArray[i];
+          if (v > maxVal){ maxVal = v; peakIdx = i; }
+        }
+        const estHz = peakIdx * (window.__orbHzPerBin ? window.__orbHzPerBin() : 44100/512);
+        const estHzSmoothed = window.__orbSmoothPeak ? window.__orbSmoothPeak(estHz) : estHz;
+        const orb = document.getElementById('magicOrb');
+        if (orb) orb.setAttribute('data-peak-hz', String(Math.round(estHzSmoothed)));
+        const span = document.getElementById('freqHz');
+        if (span) span.textContent = 'Đỉnh ~ ' + Math.round(estHzSmoothed) + ' Hz';
+      }catch(e){}
+    })();
+
+    ctx.clearRect(0,0,specCanvas.width,specCanvas.height);
+      const cx = specCanvas.width/2, cy = specCanvas.height/2, r0 = 70;
+      const N = dataArray.length;
+      for(let i=0;i<N;i++){
+        const v = dataArray[i]/255;
+        const a = (i/N)*Math.PI*2;
+        const r = r0 + v*120;
+        const x = cx + Math.cos(a)*r;
+        const y = cy + Math.sin(a)*r;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.globalAlpha = 0.35 + v*0.35; ctx.strokeStyle = '#aef9d2'; ctx.lineWidth = 1 + v*2; ctx.stroke();
+      }
+      // Pulse
+      const avg = dataArray.reduce((s,n)=>s+n,0)/(N*255);
+      root.style.setProperty('--orbPulse', (avg*1.8).toFixed(3));
+    }
+
+    // ===== Utils
+    function showToast(msg){
+      toast.textContent = msg; toast.style.display='block';
+      clearTimeout(showToast._t); showToast._t = setTimeout(()=> toast.style.display='none', 1800);
+    }
+
+    
+    // ===== Quality (multiple sources) =====
+    const qualityGrid = document.getElementById('qualityGrid');
+    const qualityRow  = document.getElementById('qualityRow');
+    let activeQuality = null; // label
+
+    function buildQualityMenu(v){
+      qualityGrid.innerHTML = '';
+      const sources = Array.isArray(v.sources)? v.sources : null;
+      if(!sources || sources.length === 0){ qualityRow.style.display='none'; activeQuality=null; return; }
+      qualityRow.style.display='block';
+      // sort by numeric quality if label like "1080p"
+      sources.sort((a,b)=>{
+        const na = parseInt(String(a.label||'').replace(/\D/g,''))||0;
+        const nb = parseInt(String(b.label||'').replace(/\D/g,''))||0;
+        return nb - na;
+      });
+      sources.forEach((s,i)=>{
+        const btn = document.createElement('button');
+        btn.setAttribute('role','menuitemradio');
+        btn.dataset.qlabel = s.label || ('Q'+(i+1));
+        btn.textContent = btn.dataset.qlabel;
+        if(!activeQuality && (s.default || i===0)) activeQuality = btn.dataset.qlabel;
+        btn.setAttribute('aria-checked', activeQuality===btn.dataset.qlabel ? 'true':'false');
+        btn.addEventListener('click', ()=> setQuality(btn.dataset.qlabel));
+        qualityGrid.appendChild(btn);
+      });
+    }
+
+    function setQuality(label){
+      if(!videos[currentIndex]) return;
+      const v = videos[currentIndex];
+      const sources = v.sources || [];
+      const target = sources.find(s=> (s.label||'')===label) || sources[0];
+      if(!target) return;
+      // Remember current state
+      const wasPlaying = !video.paused;
+      const t = video.currentTime || 0;
+      clearTracks();
+      // Rebuild sources based on selected quality
+      sources.forEach(s=>{
+        const src = document.createElement('source'); src.src = s.src; if(s.type) src.type = s.type; video.appendChild(src);
+      });
+      // Keep poster
+      video.load();
+      video.currentTime = t;
+      if(wasPlaying){ video.play().catch(()=>{}); }
+      activeQuality = label;
+      [...qualityGrid.children].forEach(b=> b.setAttribute('aria-checked', b.dataset.qlabel===label ? 'true':'false'));
+      showToast('Chất lượng: '+label);
+    }
+
+    
+    // ===== Ensure Guidelines table is in LEFT panel under playlist (fallback) =====
+    (function ensureGuidelinesLocation(){
+      const leftPanel = document.getElementById('panel');
+      const playlist  = document.getElementById('playlist');
+      const guide     = document.getElementById('guideSection');
+      if(leftPanel && playlist && guide && guide.parentElement !== leftPanel){
+        leftPanel.appendChild(guide);
+      } else if (leftPanel && playlist && guide) {
+        // ensure it's after playlist
+        if(guide.previousElementSibling !== playlist){
+          playlist.insertAdjacentElement('afterend', guide);
+        }
+      }
+    })();
+
+    
+    // ===== VIP-Pro Quick Panel logic =====
+    const vipDock = document.getElementById('vipDock');
+    const vipFab  = document.getElementById('vipFab');
+    const actTheater = document.getElementById('theater');
+    const actLights  = document.getElementById('lights');
+    const actSnap    = document.getElementById('snap');
+    const actA       = document.getElementById('abA');
+    const actB       = document.getElementById('abB');
+    const actLoop    = document.getElementById('abLoop');
+    const dimLayer   = document.getElementById('dimLayer');
+
+    vipFab?.addEventListener('click', ()=>{
+      const open = vipDock.classList.toggle('open');
+      vipFab.setAttribute('aria-expanded', open?'true':'false');
+    });
+
+    // Theater mode
+    actTheater?.addEventListener('click', ()=>{
+      document.body.classList.toggle('theater');
+      const on = document.body.classList.contains('theater');
+      actTheater.setAttribute('aria-pressed', on?'true':'false');
+      showToast(on? 'Bật Theater' : 'Tắt Theater');
+    });
+
+    // Lights off
+    actLights?.addEventListener('click', ()=>{
+      document.body.classList.toggle('lights-off');
+      const on = document.body.classList.contains('lights-off');
+      actLights.setAttribute('aria-pressed', on?'true':'false');
+      showToast(on? 'Tắt đèn' : 'Bật đèn');
+    });
+    dimLayer?.addEventListener('click', ()=>{
+      document.body.classList.remove('lights-off');
+      actLights?.setAttribute('aria-pressed','false');
+    });
+
+    // Snapshot current frame
+    actSnap?.addEventListener('click', ()=>{
+      try{
+        const w = video.videoWidth || 1280, h = video.videoHeight || 720;
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d'); x.drawImage(video, 0, 0, w, h);
+        c.toBlob((blob)=>{
+          if(!blob){ showToast('Không chụp được khung hình'); return; }
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url;
+          const ts = Math.floor(video.currentTime||0).toString().padStart(4,'0');
+          a.download = `snapshot_${ts}s.png`; a.click();
+          URL.revokeObjectURL(url);
+          showToast('Đã lưu snapshot');
+        });
+      }catch(e){ showToast('Snapshot cần CORS từ nguồn video'); }
+    });
+
+    // A–B loop
+    let aMark=null, bMark=null, abOn=false;
+    actA?.addEventListener('click', ()=>{ aMark = video.currentTime||0; showToast('Đặt A: '+fmt(aMark)); });
+    actB?.addEventListener('click', ()=>{ bMark = video.currentTime||0; showToast('Đặt B: '+fmt(bMark)); });
+    actLoop?.addEventListener('click', ()=>{
+      abOn = !abOn;
+      actLoop.setAttribute('aria-pressed', abOn?'true':'false');
+      if(abOn && (aMark==null || bMark==null)){ showToast('Đặt A và B trước đã'); abOn=false; actLoop.setAttribute('aria-pressed','false'); }
+      if(aMark!=null && bMark!=null && aMark>bMark){ const t=aMark; aMark=bMark; bMark=t; }
+      showToast(abOn? 'Loop A–B bật' : 'Loop A–B tắt');
+    });
+    video.addEventListener('timeupdate', ()=>{
+      if(!abOn || aMark==null || bMark==null) return;
+      if(video.currentTime > bMark){ video.currentTime = aMark; }
+    });
+
+    
+    // ===== Boost toggle
+    const actBoost = document.getElementById('boost');
+    actBoost?.addEventListener('click', ()=>{
+      boostOn = !boostOn;
+      actBoost.setAttribute('aria-pressed', boostOn?'true':'false');
+      try{ (typeof applyBoostRouting==='function') && applyBoostRouting(); }catch(e){}
+      showToast(boostOn? 'Audio Boost bật' : 'Audio Boost tắt');
+    });
+
+    // ===== Bookmarks (localStorage)
+    const bmBtn   = document.getElementById('bm');
+    const bmPanel = document.getElementById('bmPanel');
+    const bmList  = document.getElementById('bmList');
+    const bmExport= document.getElementById('bmExport');
+    const bmClear = document.getElementById('bmClear');
+
+    function bmKey(){ const id = (videos[currentIndex]?.title) || video.currentSrc || 'default'; return 'vippro_bm_'+id; }
+    function bmLoad(){ try{ return JSON.parse(localStorage.getItem(bmKey())||'[]'); }catch{return []} }
+    function bmSave(items){ localStorage.setItem(bmKey(), JSON.stringify(items||[])); }
+    function bmRender(){
+      const items = bmLoad(); bmList.innerHTML='';
+      if(!items.length){ bmList.innerHTML='<div class="bm-empty">Chưa có mốc nào</div>'; return; }
+      items.forEach((it, idx)=>{
+        const row = document.createElement('div'); row.className='bm-item';
+        const jump = document.createElement('button'); jump.className='ts'; jump.textContent = fmt(it.time||0); jump.title='Nhảy tới'; jump.addEventListener('click', ()=>{ video.currentTime = it.time||0; video.play(); });
+        const label = document.createElement('div'); label.textContent = it.label || ('Mốc '+(idx+1));
+        const copy = document.createElement('button'); copy.title='Copy thời điểm'; copy.textContent='⧉'; copy.addEventListener('click', ()=>{ navigator.clipboard?.writeText(window.location.href.split('#')[0] + '#t=' + Math.floor(it.time||0)); showToast('Đã copy mốc'); });
+        const del = document.createElement('button'); del.title='Xoá'; del.textContent='✕'; del.addEventListener('click', ()=>{ const arr=bmLoad(); arr.splice(idx,1); bmSave(arr); bmRender(); });
+        row.appendChild(jump); row.appendChild(label); row.appendChild(copy); row.appendChild(del);
+        bmList.appendChild(row);
+      });
+    }
+    function bmAdd(){ const t = video.currentTime||0; const items = bmLoad(); const label = 'Mốc ' + fmt(t); items.push({time:t, label}); bmSave(items); bmRender(); showToast('Đã đánh dấu '+fmt(t)); }
+    bmBtn?.addEventListener('click', ()=>{ bmAdd(); bmPanel.classList.add('open'); });
+    bmExport?.addEventListener('click', ()=>{ const data = JSON.stringify(bmLoad(), null, 2); navigator.clipboard?.writeText(data); showToast('Đã copy JSON'); });
+    bmClear?.addEventListener('click', ()=>{ bmSave([]); bmRender(); showToast('Đã xoá bookmarks'); });
+    // refresh bookmarks when switching video
+    const _oldLoadVideo = loadVideo;
+    loadVideo = function(index, autoplay=false){ _oldLoadVideo(index, autoplay); setTimeout(bmRender, 200); };
+
+    
+    // ===== VIP Corner: live stats & quick actions =====
+    const stRes = document.getElementById('stRes');
+    const stFps = document.getElementById('stFps');
+    const stDrop= document.getElementById('stDrop');
+    const stRate= document.getElementById('stRate');
+
+    function updateStats(){
+      if(!video) return;
+      const w = video.videoWidth||0, h = video.videoHeight||0;
+      stRes.textContent = (w && h) ? (w+'×'+h) : '—';
+      stRate.textContent = (video.playbackRate || 1)+'×';
+
+      // FPS + dropped frames
+      let fps='—', drop='—';
+      const q = (video.getVideoPlaybackQuality && video.getVideoPlaybackQuality()) || null;
+      if(q){ 
+        const total = q.totalVideoFrames||0;
+        const dropped = q.droppedVideoFrames||0;
+        const creation = updateStats._lastTotal || 0;
+        const dt = (performance.now() - (updateStats._lastTS || performance.now())) / 1000;
+        if(total && dt>0.2){ fps = ((total - creation)/dt).toFixed(1); }
+        drop = dropped;
+        updateStats._lastTotal = total; updateStats._lastTS = performance.now();
+      } else {
+        // WebKit fallback
+        const dec = video.webkitDecodedFrameCount || 0;
+        const drp = video.webkitDroppedFrameCount || 0;
+        const creation = updateStats._lastDec || 0;
+        const dt = (performance.now() - (updateStats._lastTS || performance.now())) / 1000;
+        if(dec && dt>0.2){ fps = ((dec - creation)/dt).toFixed(1); }
+        drop = drp || '—';
+        updateStats._lastDec = dec; updateStats._lastTS = performance.now();
+      }
+      stFps.textContent = fps; stDrop.textContent = drop;
+    }
+    setInterval(updateStats, 800);
+    video?.addEventListener('loadedmetadata', updateStats);
+
+    // Quick actions
+    document.getElementById('acMute')?.addEventListener('click', ()=>{ video.muted = !video.muted; showToast(video.muted?'Muted':'Unmuted'); });
+    document.getElementById('acPip')?.addEventListener('click', async ()=>{
+      try{ if(document.pictureInPictureElement) await document.exitPictureInPicture(); else if(document.pictureInPictureEnabled) await video.requestPictureInPicture(); }catch(e){ showToast('PiP không khả dụng'); }
+    });
+    document.getElementById('acExport')?.addEventListener('click', ()=>{
+      try{ const blob = new Blob([JSON.stringify({videos}, null, 2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='videos_export.json'; a.click(); URL.revokeObjectURL(url); showToast('Đã tải JSON'); }catch(e){ showToast('Export lỗi'); }
+    });
+    document.getElementById('acEmbed')?.addEventListener('click', ()=>{
+      const code = '<iframe src="'+location.href+'" style="width:100%;height:520px;border:0;border-radius:12px;overflow:hidden" allow="autoplay; picture-in-picture" loading="lazy"></iframe>';
+      navigator.clipboard?.writeText(code); showToast('Đã copy mã nhúng');
+    });
+
+    
+    // ===== Fixed equal height: left panel = right dock =====
+    function syncColumnsHeight(){
+      const layout = document.querySelector('.layout');
+      const left = document.getElementById('panel');
+      const right = document.querySelector('.dock');
+      if(!layout || !left || !right) return;
+      // Only apply when in 2-column layout
+      const isTwoCol = window.getComputedStyle(layout).gridTemplateColumns.split(' ').length > 1;
+      if(isTwoCol){
+        const h = right.offsetHeight || 0;
+        left.style.minHeight = h ? (h + 'px') : '';
+      }else{
+        left.style.minHeight = '';
+      }
+    }
+    window.addEventListener('load', syncColumnsHeight);
+    window.addEventListener('resize', ()=>{ requestAnimationFrame(syncColumnsHeight); });
+    // Also re-sync after fonts/images load and when menu toggles change size
+    document.fonts && document.fonts.ready && document.fonts.ready.then(syncColumnsHeight);
+    new MutationObserver(()=>syncColumnsHeight()).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['open','style','class']});
+
+    // Boot
+    loadPlaylist();
+  </script>
+<script>
+
+/* ===== Mute button + popover + đồng bộ 2 slider ===== */
+(function(){
+  const video = window.video || document.querySelector('video');
+  if (!video) return;
+
+  const muteBtn = document.getElementById('muteBtn');
+  const volPop  = document.getElementById('volPop');
+  const vbar2  = document.getElementById('vbar2');
+  const vfill2 = document.getElementById('vf2');
+  const vknob2 = document.getElementById('vknob2');
+
+  // Reuse existing if present
+  const defaultVol = (typeof window.defaultVol !== 'undefined') ? window.defaultVol : { value: String(video.volume || 1) };
+  let lastVol = parseFloat((defaultVol?.value ?? '1') || '1');
+
+  // Try to reuse existing setVolumeUI, else define a minimal one that updates video + first slider
+  function setVolumeUIMin(v){
+    v = Math.max(0, Math.min(1, v));
+    try {
+      if (typeof window.setVolumeUI === 'function') window.setVolumeUI(v);
+    } catch(e){}
+    try {
+      video.volume = v;
+    } catch(e){}
+    return v;
+  }
+
+  function setVolumeUIBoth(v){
+    v = setVolumeUIMin(v); // updates video and original slider if available
+    // Update popover slider
+    if (vbar2 && vfill2 && vknob2){
+      const H = vbar2.clientHeight || 110;
+      vfill2.style.height = (v*H)+'px';
+      vknob2.style.top    = (100 - v*100) + '%';
+    }
+    reflectMuteIcon();
+  }
+
+  function reflectMuteIcon(){
+    if (!muteBtn) return;
+    const isMuted = video.muted || video.volume === 0;
+    muteBtn.setAttribute('aria-pressed', isMuted ? 'true' : 'false');
+    muteBtn.title = isMuted ? 'Bật tiếng' : 'Tắt tiếng';
+    muteBtn.setAttribute('aria-label', isMuted ? 'Bật tiếng' : 'Tắt tiếng');
+    const ac = document.getElementById('acMute');
+    if (ac) ac.setAttribute('aria-pressed', isMuted ? 'true' : 'false');
+  }
+
+  function toggleMute(){
+    const muting = !(video.muted || video.volume === 0);
+    if (muting){
+      if (video.volume > 0) lastVol = video.volume;
+      setVolumeUIBoth(0);
+      video.muted = true;
+    } else {
+      const restore = Math.max(0.05, lastVol || 0.5);
+      video.muted = false;
+      setVolumeUIBoth(restore);
+    }
+    reflectMuteIcon();
+  }
+
+  muteBtn && muteBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleMute();
+    volPop && volPop.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e)=>{
+    if (!volPop) return;
+    const withinBtn = muteBtn && (e.target === muteBtn || muteBtn.contains(e.target));
+    const withinPop = volPop.contains(e.target);
+    if (!withinBtn && !withinPop) volPop.classList.remove('open');
+  });
+
+  function volFromEventY2(clientY){
+    const r = vbar2.getBoundingClientRect();
+    const ratio = 1 - Math.min(Math.max(0,(clientY - r.top)/r.height), 1);
+    return ratio;
+  }
+
+  let vdrag2 = false;
+  vbar2 && vbar2.addEventListener('mousedown', e=>{ vdrag2=true; setVolumeUIBoth(volFromEventY2(e.clientY)); video.muted = (video.volume===0); reflectMuteIcon(); });
+  window.addEventListener('mousemove', e=>{ if(vdrag2){ setVolumeUIBoth(volFromEventY2(e.clientY)); video.muted = (video.volume===0); reflectMuteIcon(); } });
+  window.addEventListener('mouseup', ()=> vdrag2=false);
+  vbar2 && vbar2.addEventListener('touchstart', e=>{ vdrag2=true; setVolumeUIBoth(volFromEventY2(e.touches[0].clientY)); video.muted = (video.volume===0); reflectMuteIcon(); }, {passive:true});
+  window.addEventListener('touchmove', e=>{ if(vdrag2){ setVolumeUIBoth(volFromEventY2(e.touches[0].clientY)); video.muted = (video.volume===0); reflectMuteIcon(); } }, {passive:true});
+  window.addEventListener('touchend', ()=> vdrag2=false);
+  vbar2 && vbar2.addEventListener('wheel', (e)=>{ e.preventDefault(); const delta = e.deltaY>0 ? -0.05 : 0.05; setVolumeUIBoth(video.volume + delta); video.muted = (video.volume===0); reflectMuteIcon(); }, {passive:false});
+
+  video.addEventListener('volumechange', ()=>{ setVolumeUIBoth(video.muted ? 0 : video.volume); });
+
+  document.addEventListener('keydown', (e)=>{
+    if ((e.key === 'm' || e.key === 'M') && !e.metaKey && !e.ctrlKey && !e.altKey){
+      const t = e.target;
+      const tag = (t?.tagName || '').toUpperCase();
+      if (t?.isContentEditable || ['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+      e.preventDefault();
+      toggleMute();
+    }
+  });
+
+  // Initialize
+  setTimeout(()=>{
+    setVolumeUIBoth(video.muted ? 0 : video.volume);
+    reflectMuteIcon();
+  }, 0);
+
+  // Optional: wire VIP Corner mute
+  const acMute = document.getElementById('acMute');
+  acMute && acMute.addEventListener('click', (e)=>{ e.preventDefault(); toggleMute(); });
+})();
+
+</script>
+
+  <!-- VIP-Pro Quick Panel -->
+  <div class="vipdock" id="vipDock" aria-label="VIP-Pro nhanh">
+    <div class="menu" role="group" aria-label="VIP-Pro actions">
+      <button class="act" id="abA" title="Đặt điểm A">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7 20V4m0 0l4 4m-4-4L3 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="label">Đặt A</span>
+      </button>
+      <button class="act" id="abB" title="Đặt điểm B">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17 4v16m0 0l-4-4m4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="label">Đặt B</span>
+      </button>
+      <button class="act" id="abLoop" title="Bật/tắt lặp A–B" aria-pressed="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 7h11a4 4 0 1 1 0 8H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 11l-4-4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="label">Loop A–B</span>
+      </button>
+      <button class="act" id="snap" title="Chụp khung hình">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+        <span class="label">Snapshot</span>
+      </button>
+      <button class="act" id="lights" title="Tắt đèn/phục hồi" aria-pressed="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3v6m0 0a5 5 0 0 0-5 5v2h10v-2a5 5 0 0 0-5-5Z" stroke="currentColor" stroke-width="2"/><path d="M9 19h6" stroke="currentColor" stroke-width="2"/></svg>
+        <span class="label">Tắt đèn</span>
+      </button>
+      <button class="act" id="boost" title="Tăng cường âm thanh" aria-pressed="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 12h3l3 7 3-14 3 7h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="label">Boost</span>
+      </button>
+      <button class="act" id="bm" title="Đánh dấu thời điểm">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 4h12v16l-6-4-6 4V4z" stroke="currentColor" stroke-width="2"/></svg>
+        <span class="label">Bookmark</span>
+      </button>
+      <button class="act" id="theater" title="Rạp phim (Theater)" aria-pressed="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="2"/><path d="M4 10h16" stroke="currentColor" stroke-width="2"/></svg>
+        <span class="label">Theater</span>
+      </button>
+    
+    <div class="bm-panel" id="bmPanel">
+      <div class="bm-head">
+        <h4>Bookmarks</h4>
+        <div class="bm-actions">
+          <button id="bmExport" title="Xuất JSON">⤓</button>
+          <button id="bmClear" title="Xoá hết">✕</button>
+        </div>
+      </div>
+      <div class="bm-list" id="bmList"><div class="bm-empty">Chưa có mốc nào</div></div>
+    </div>
+    <button class="fab" id="vipFab" aria-expanded="false" title="VIP-Pro">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.3 4.6 1.6 7-6.3-3.6-6.3 3.6 1.6-7L2 9.2l7.1-.6L12 2z"/></svg>
+    </button>
+    <div class="muted-tip">VIP-Pro</div>
+  </div>
+
+<script>
+/* ===== Tilt Panel (left column only, non-intrusive) ===== */
+(function tiltLeftPanel(){
+  const panel = document.getElementById('panel'); // .holo-panel
+  if(!panel) return;
+
+  const MAX_X = 6;   // rotateX range (up/down)
+  const MAX_Y = 10;  // rotateY range (left/right)
+  let raf = null;
+
+  function setTilt(xDeg, yDeg, live=true){
+    if(live) panel.classList.add('tilt-live'); else panel.classList.remove('tilt-live');
+    panel.style.setProperty('--tX', (xDeg).toFixed(2) + 'deg');
+    panel.style.setProperty('--tY', (yDeg).toFixed(2) + 'deg');
+  }
+
+  function pointerXY(e){
+    const p = e.touches?.[0] || e;
+    return { x: p.clientX, y: p.clientY };
+  }
+
+  function onMove(e){
+    const {x, y} = pointerXY(e);
+    const r = panel.getBoundingClientRect();
+    const nx = ((x - r.left) / r.width)  * 2 - 1; // -1..1
+    const ny = ((y - r.top)  / r.height) * 2 - 1; // -1..1
+    const tX = -ny * MAX_X; // up -> -, down -> +
+    const tY =  nx * MAX_Y; // right -> +, left -> -
+
+    if(!raf){
+      raf = requestAnimationFrame(()=>{
+        setTilt(tX, tY, true);
+        raf = null;
+      });
+    }
+  }
+
+  function onLeave(){
+    setTilt(0, 0, false);
+  }
+
+  panel.addEventListener('pointerenter', onMove, {passive:true});
+  panel.addEventListener('pointermove',  onMove, {passive:true});
+  panel.addEventListener('pointerleave', onLeave, {passive:true});
+})();
+</script>
+
+<script id="video-fullscreen-only-script">
+
+(function(){
+  function ready(fn){ if(document.readyState!=='loading'){ fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
+  ready(function(){
+
+    // Find the most relevant .video-wrap container for a given element
+    function getContainerFor(el){
+      if(!el) return document.querySelector('.video-wrap') || document.body;
+      const video = el.closest('.video-wrap') ? el : (el.tagName==='VIDEO' ? el : null);
+      const scope = el.closest('.video-wrap') || (video && video.closest('.video-wrap')) || document.querySelector('.video-wrap');
+      return scope || document.body;
+    }
+
+    async function enterFS(el){
+      if(!el) return;
+      if (el.requestFullscreen) return el.requestFullscreen();
+      if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+      if (el.msRequestFullscreen) return el.msRequestFullscreen();
+    }
+    async function exitFS(){
+      if (document.exitFullscreen) return document.exitFullscreen();
+      if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+      if (document.msExitFullscreen) return document.msExitFullscreen();
+    }
+
+    // Toggle fullscreen for the container (.video-wrap) so custom controls remain visible
+    async function toggleContainerFullscreenFor(buttonOrVideo){
+      const container = getContainerFor(buttonOrVideo);
+      try{
+        const isFS = (document.fullscreenElement === container) || (document.webkitFullscreenElement === container);
+        if(!isFS){
+          await enterFS(container);
+        }else{
+          await exitFS();
+        }
+      }catch(e){
+        console && console.warn && console.warn('Fullscreen không khả dụng:', e);
+        alert && alert('Fullscreen không khả dụng trong trình duyệt này.');
+      }
+    }
+
+    // Rebind any existing "Toàn màn hình" buttons to fullscreen the container (.video-wrap)
+    const fullButtons = Array.from(document.querySelectorAll('[data-act="full"], [title*="Toàn màn hình"], [aria-label*="Toàn màn hình"], button[title*="Toàn màn hình"], button[aria-label*="Toàn màn hình"]'));
+    fullButtons.forEach((btn)=>{
+      btn.setAttribute('onclick',''); // drop inline
+      const clone = btn.cloneNode(true);
+      btn.replaceWith(clone);
+      clone.addEventListener('click', function(evt){
+        evt.preventDefault();
+        toggleContainerFullscreenFor(clone);
+      });
+    });
+
+    // Double click on any video toggles fullscreen on its container
+    document.querySelectorAll('video').forEach(v=>{
+      v.addEventListener('dblclick', (e)=>{
+        e.preventDefault();
+        toggleContainerFullscreenFor(v);
+      });
+    });
+
+    // When the specific .video-wrap is fullscreen, keep native <video> controls off (we use custom UI)
+    function onFsChange(){
+      // Do nothing; our UI lives inside .video-wrap
+    }
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+  });
+})();
+</script>
+
+<!-- === [ADDED] YouTube-like keyboard shortcuts + highlight + Shift+? help === -->
+<script>
+(function(){
+  const STEP_ARROW = 5, STEP_JL = 10, VOL_STEP = 0.05, RATE_STEP = 0.25, FRAME_SEC = 1/30;
+  const qs = s => document.querySelector(s);
+  const qsa = s => Array.from(document.querySelectorAll(s));
+  const video = qs('video');
+  const playBtn = qs('[data-act="play"]');
+  const prevBtn = qs('[data-act="prev"]');
+  const nextBtn = qs('[data-act="next"]');
+  const fullBtn = qsa('[data-act="full"]')[0];
+  const ccBtns  = qsa('[data-act="cc"]');
+  const muteBtn = qs('#muteBtn') || qs('[data-act="mute"]');
+  const scrubEl = qs('#scrub') || qs('.scrub');
+  const moreBtn = qs('#moreBtn') || qs('[data-act="more"]');
+
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  function isTypingTarget(el){
+    if(!el) return false;
+    const tag=(el.tagName||'').toUpperCase();
+    return ['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag) || el.isContentEditable;
+  }
+  function flash(target){
+    const el = typeof target === 'string' ? qs(target) : target;
+    if(!el) return;
+    el.classList.add('hl-gold');
+    setTimeout(()=> el.classList.remove('hl-gold'), 600);
+  }
+  function seekBy(sec){ if(!video || !isFinite(video.duration)) return; video.currentTime = clamp((video.currentTime||0)+sec, 0, video.duration||0); }
+  function seekToPercent(p){ if(!video || !isFinite(video.duration)) return; video.currentTime = clamp(p*(video.duration||0), 0, video.duration||0); }
+  function setVol(v){
+    if(!video) return;
+    const nv = clamp(v,0,1);
+    video.volume = nv; video.muted = (nv===0);
+    try{ window.setVolumeUI && setVolumeUI(nv); }catch{}
+    try{ window.showToast && showToast('Âm lượng: '+Math.round(nv*100)+'%'+(video.muted?' (mute)':'')); }catch{}
+  }
+  function setRateSafe(r){
+    if(!video) return;
+    const nr = clamp(r, .25, 2.0);
+    try{ window.setRate ? setRate(nr) : (video.playbackRate = nr); }catch{ video.playbackRate = nr; }
+  }
+
+  function ensureHelp(){
+    if (qs('#ytHelpOverlay')) return;
+    const wrap = document.createElement('div'); wrap.id='ytHelpOverlay';
+    wrap.innerHTML = `
+      <div class="panel" role="dialog" aria-modal="true" aria-label="Phím tắt">
+        <h3>Phím tắt • VIP-Pro</h3>
+        <div class="grid" aria-describedby="helpList">
+          ${[
+            [['Space','K'],'Phát / Tạm dừng'],
+            [['J','←'],'Lùi 10s · Lùi 5s'],
+            [['L','→'],'Tiến 10s · Tiến 5s'],
+            [[',','.'],'Lùi / Tiến từng khung (khi tạm dừng)'],
+            [['↑','↓'],'Tăng / Giảm âm lượng (5%)'],
+            [['M'],'Bật/Tắt tiếng'],
+            [['0–9'],'Nhảy tới 0%…90% thời lượng'],
+            [['Home','End'],'Đầu / Cuối video'],
+            [['<','>'],'Giảm / Tăng tốc (0.25×)'],
+            [['C'],'Bật/Tắt phụ đề'],
+            [['F'],'Toàn màn hình'],
+            [['Shift + P','Shift + N'],'Video trước / kế'],
+            [['Shift + ?'],'Mở bảng trợ giúp này'],
+          ].map(([keys,desc])=>`
+            <div class="item">
+              <div>${keys.map(k=>`<kbd>${k}</kbd>`).join(' ')}</div>
+              <div>${desc}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="close"><button type="button" id="ytHelpClose">Đóng (Esc)</button></div>
+      </div>`;
+    document.body.appendChild(wrap);
+    wrap.addEventListener('click', e=>{ if(e.target.id==='ytHelpOverlay') wrap.classList.remove('open'); });
+    document.addEventListener('keydown', e=>{
+      if(!wrap.classList.contains('open')) return;
+      if(e.key==='Escape'){ wrap.classList.remove('open'); e.preventDefault(); }
+      else e.stopPropagation();
+    }, true);
+    document.getElementById('ytHelpClose').addEventListener('click', ()=> wrap.classList.remove('open'));
+  }
+  ensureHelp();
+  function toggleHelp(){ qs('#ytHelpOverlay').classList.toggle('open'); }
+
+  document.addEventListener('keydown', (e)=>{
+    if (isTypingTarget(document.activeElement) || e.altKey || e.metaKey) return;
+
+    if ((e.shiftKey && (e.key === '?' || e.key === '/'))){
+      ensureHelp(); toggleHelp(); e.preventDefault(); return;
+    }
+
+    if (/^[0-9]$/.test(e.key)){
+      const pct = parseInt(e.key,10)/10; seekToPercent(pct); flash(scrubEl); e.preventDefault(); return;
+    }
+
+    switch(e.key){
+      case ' ': case 'k':
+        playBtn && playBtn.click(); flash(playBtn); e.preventDefault(); break;
+
+      case 'j': seekBy(-10); flash(scrubEl); e.preventDefault(); break;
+      case 'l': seekBy(+10); flash(scrubEl); e.preventDefault(); break;
+      case 'ArrowLeft': seekBy(-5); flash(scrubEl); e.preventDefault(); break;
+      case 'ArrowRight': seekBy(+5); flash(scrubEl); e.preventDefault(); break;
+
+      case ',':
+        if (video && !video.paused) { playBtn && playBtn.click(); }
+        seekBy(-1/30); flash(scrubEl); e.preventDefault(); break;
+      case '.':
+        if (video && !video.paused) { playBtn && playBtn.click(); }
+        seekBy(+1/30); flash(scrubEl); e.preventDefault(); break;
+
+      case 'ArrowUp': setVol((video?.volume||0)+0.05); flash(muteBtn||moreBtn); e.preventDefault(); break;
+      case 'ArrowDown': setVol((video?.volume||0)-0.05); flash(muteBtn||moreBtn); e.preventDefault(); break;
+      case 'm': case 'M': muteBtn && muteBtn.click(); flash(muteBtn); e.preventDefault(); break;
+
+      case '<': setRateSafe((video?.playbackRate||1)-0.25); flash(moreBtn); e.preventDefault(); break;
+      case '>': setRateSafe((video?.playbackRate||1)+0.25); flash(moreBtn); e.preventDefault(); break;
+
+      case 'c': case 'C':
+        if (ccBtns && ccBtns.length){ ccBtns.forEach(btn=>btn.click()); flash(ccBtns[0]); e.preventDefault(); }
+        break;
+
+      case 'f': case 'F':
+        fullBtn && fullBtn.click(); flash(fullBtn); e.preventDefault(); break;
+
+      case 'Home': seekToPercent(0); flash(scrubEl); e.preventDefault(); break;
+      case 'End':  seekToPercent(1); flash(scrubEl); e.preventDefault(); break;
+
+      case 'P': if(e.shiftKey){ prevBtn && prevBtn.click(); flash(prevBtn); e.preventDefault(); } break;
+      case 'N': if(e.shiftKey){ nextBtn && nextBtn.click(); flash(nextBtn); e.preventDefault(); } break;
+    }
+  }, {passive:false});
+})();
+</script>
+
+
+
+<!-- === GLOBAL SHORTCUTS v2 (Esc closes dialogs, volume popup follows keys) === -->
+<!-- [merged patch] This is the active shortcuts block; legacy keydown disabled above. -->
+<script>
+(() => {
+  const video   = window.video || document.querySelector('video');
+  if (!video) return;
+
+  const muteBtn = document.querySelector('[data-act="mute"]');
+  const fullBtn = document.querySelector('[data-act="full"]');
+  const ccBtn   = document.querySelector('[data-act="cc"]');
+  const volPop  = document.getElementById('volPop');
+  const moreBtn = document.getElementById('moreBtn');
+  const moreMenu= document.getElementById('moreMenu');
+
+  // Secondary (popover) volume elements
+  const vbar2  = document.getElementById('vbar2');
+  const vfill2 = document.getElementById('vf2');
+  const vknob2 = document.getElementById('vknob2');
+
+  // Primary (main) volume elements that the page already defines
+  const vbar   = window.vbar  || document.getElementById('vbar');
+  const vfill  = window.vfill || document.getElementById('vf');
+  const vknob  = window.vknob || document.getElementById('vknob');
+
+  // ===== helpers
+  function isTyping() {
+    const el = document.activeElement;
+    return el && (/^(input|textarea|select)$/i.test(el.tagName) || el.isContentEditable);
+  }
+  function hl(el){ if(!el) return; el.classList.add('hl-gold'); setTimeout(()=>el.classList.remove('hl-gold'), 300); }
+  function showToastSafe(msg){ if (typeof showToast === 'function') showToast(msg); }
+
+  // Reflect mute icon (CSS in file: [aria-pressed="true"] shows "\" slash)
+  function setMuteUI(state){ muteBtn?.setAttribute('aria-pressed', state ? 'true':'false'); }
+  video.addEventListener('volumechange', () => setMuteUI(video.muted || video.volume === 0));
+
+  // Vol popover control
+  let volTimer;
+  function openVolPop(autoHideMs = 1200){
+    if (!volPop) return;
+    volPop.classList.add('open');
+    clearTimeout(volTimer);
+    if (autoHideMs > 0){
+      volTimer = setTimeout(()=> volPop.classList.remove('open'), autoHideMs);
+    }
+  }
+
+  // Update both volume UIs
+  function updateVolUI(v){
+    v = Math.max(0, Math.min(1, v));
+    // Use page's own setter if available (updates main bar)
+    if (typeof setVolumeUI === 'function') setVolumeUI(v);
+    else {
+      video.volume = v; video.muted = (v===0);
+      if (vbar && vfill && vknob){
+        const H = vbar.clientHeight;
+        if (H){
+          vfill.style.height = (v*H)+'px';
+          vknob.style.top = (100 - v*100) + '%';
+        }
+      }
+    }
+    // Mirror to popover volume (vbar2)
+    if (vbar2 && vfill2 && vknob2){
+      const H2 = vbar2.clientHeight;
+      if (H2){
+        vfill2.style.height = (v*H2)+'px';
+        vknob2.style.top = (100 - v*100) + '%';
+      }
+    }
+    // Ensure aria state correct
+    setMuteUI(video.muted || v === 0);
+  }
+
+  // Persist last volume to restore on unmute
+  let lastVolume = Number(localStorage.getItem('vip_last_vol') || '') || 0.8;
+
+  function toggleMute(){
+    if (video.muted || video.volume === 0){
+      const v = Math.max(0.05, lastVolume);
+      updateVolUI(v);
+      video.muted = false;
+      setMuteUI(false);
+      showToastSafe('Âm thanh: bật');
+    } else {
+      lastVolume = video.volume;
+      localStorage.setItem('vip_last_vol', String(lastVolume));
+      updateVolUI(0);
+      video.muted = true;
+      setMuteUI(true);
+      showToastSafe('Âm thanh: tắt');
+    }
+    hl(muteBtn);
+  }
+
+  function togglePlay(){
+    if (video.paused) video.play(); else video.pause();
+    if (typeof reflectPlayIcon === 'function') reflectPlayIcon();
+    hl(document.querySelector('[data-act="play"]'));
+  }
+
+  function toggleCC(){
+    if (!video.textTracks){ showToastSafe('Không có phụ đề'); return; }
+    let showing = false;
+    for (const track of video.textTracks){
+      const isVI = ((track.language||'').toLowerCase()==='vi') || /vi/i.test(track.label||'');
+      if (isVI){
+        track.mode = (track.mode === 'showing') ? 'disabled' : 'showing';
+        showing = (track.mode === 'showing');
+      } else {
+        track.mode = 'disabled';
+      }
+    }
+    showToastSafe(showing ? 'Đã bật phụ đề VI' : 'Đã tắt phụ đề VI');
+    hl(ccBtn);
+  }
+
+  async function toggleFullscreenGlobal(){
+    const container = document.querySelector('.video-wrap') || video.parentElement;
+    if (document.fullscreenElement){
+      try { await document.exitFullscreen(); } catch {}
+    } else if (container?.requestFullscreen){
+      try { await container.requestFullscreen(); } catch {}
+    } else {
+      document.body.classList.toggle('pfs-active');
+      document.documentElement.classList.toggle('fullscreen-active');
+    }
+    hl(fullBtn);
+  }
+
+  function closeAllPanels(){
+    // 1) Native <dialog>
+    document.querySelectorAll('dialog[open]').forEach(d => { try { d.close(); } catch{} d.removeAttribute('open'); });
+    // 2) ARIA dialogs / overlays
+    document.querySelectorAll('[role="dialog"][aria-modal="true"]').forEach(el => el.classList.remove('open'));
+    // 3) Elements using .open class (menus/popovers)
+    document.querySelectorAll('.open').forEach(el => {
+      // Keep it conservative: only known overlays
+      if (el === volPop || el === (window.ytHelpOverlay||document.getElementById('ytHelpOverlay')) || el === moreMenu) {
+        el.classList.remove('open');
+      }
+    });
+    // 4) Specific known UI
+    moreMenu?.classList.remove('open'); moreBtn?.setAttribute('aria-expanded','false');
+    volPop?.classList.remove('open');
+    document.getElementById('ytHelpOverlay')?.classList.remove('open');
+    // 5) Exit fullscreen/pseudo
+    if (document.fullscreenElement){ document.exitFullscreen?.(); }
+    document.body.classList.remove('pfs-active');
+    document.documentElement.classList.remove('fullscreen-active');
+    showToastSafe('Đã đóng hộp thoại');
+  }
+
+  function stepRate(d){
+    const current = video.playbackRate || 1;
+    const r = Math.max(0.25, Math.min(2, Math.round((current + d)*100)/100));
+    if (typeof setRate === 'function') setRate(r); else video.playbackRate = r;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.defaultPrevented) return;
+    const key = e.key;
+    const k = key.length === 1 ? key.toLowerCase() : key;
+
+    // Allow Esc even when typing; otherwise ignore if typing
+    if (k !== 'Escape' && isTyping()) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    switch (k) {
+      case 'm': e.preventDefault(); toggleMute(); break;
+      case 'k':
+      case ' ': e.preventDefault(); togglePlay(); break;
+      case 'c': e.preventDefault(); toggleCC(); break;
+      case 'f': e.preventDefault(); toggleFullscreenGlobal(); break;
+
+      case 'ArrowLeft':  e.preventDefault(); video.currentTime = Math.max(0, (video.currentTime||0) - 5); typeof updateTime === 'function' && updateTime(); break;
+      case 'ArrowRight': e.preventDefault(); video.currentTime = Math.min(video.duration||0, (video.currentTime||0) + 5); typeof updateTime === 'function' && updateTime(); break;
+      case 'ArrowUp': {
+        e.preventDefault();
+        const next = Math.min(1, (video.muted ? 0 : video.volume) + 0.05);
+        updateVolUI(next);
+        openVolPop(1400);
+        break;
+      }
+      case 'ArrowDown': {
+        e.preventDefault();
+        const next = Math.max(0, (video.muted ? 0 : video.volume) - 0.05);
+        updateVolUI(next);
+        openVolPop(1400);
+        break;
+      }
+
+      case '.':
+      case '>': e.preventDefault(); stepRate(+0.25); break;
+      case ',':
+      case '<': e.preventDefault(); stepRate(-0.25); break;
+
+      case 'n': e.preventDefault(); document.querySelector('[data-act="next"]')?.click(); break;
+      case 'p': e.preventDefault(); document.querySelector('[data-act="prev"]')?.click(); break;
+
+      case 'Escape': e.preventDefault(); e.stopPropagation(); closeAllPanels(); break;
+    }
+  }, { capture: true });
+})();
+</script>
+
+<script id="assistant-menu-speed-slider-js">
+(function(){
+  const speedGridEl = document.getElementById('speedGrid');
+  const gridRow = speedGridEl ? speedGridEl.closest('.row') : null;
+  if (gridRow && !document.getElementById('speedSliderRow')){
+     gridRow.classList.add('hidden-by-slider');
+     gridRow.insertAdjacentHTML('afterend', `
+       <div class="row speed-slider-row" id="speedSliderRow" role="group" aria-labelledby="speedSliderTitle">
+         <div class="label" id="speedSliderTitle">Tốc độ</div>
+         <div class="speed-slider">
+           <div class="head"><span class="custom">Tùy chỉnh</span><span class="val" id="speedVal">1.00×</span></div>
+           <input class="speed-range" id="speedRange" type="range" min="0.25" max="2" step="0.05" value="1" aria-label="Tốc độ phát">
+           <div class="marks"><span>0.25</span><span>1.0</span><span>2.0</span></div>
+         </div>
+       </div>`);
+  }
+
+  // helper: format number to 2 decimals but trim trailing zeros
+  function fmt(x){
+    const s = (Math.round(x*100)/100).toFixed(2);
+    return s.replace(/\.00$/, '.00').replace(/(\.\d)0$/, '$1'); // keep up to 2dp
+  }
+  function updateSliderUI(r){
+    const vr = document.getElementById('speedRange');
+    const val = document.getElementById('speedVal');
+    if (vr) vr.value = r;
+    if (val) val.textContent = fmt(r)+'×';
+  }
+
+  // upgrade setRate to also sync the slider
+  const _oldSetRate = window.setRate;
+  window.setRate = function(r){
+    if (typeof _oldSetRate === 'function') _oldSetRate(r);
+    else { try{ video.playbackRate = r; }catch(e){} }
+    updateSliderUI(r);
+  };
+
+  // slider -> setRate
+  const slider = document.getElementById('speedRange');
+  if (slider){
+    slider.addEventListener('input', ()=> window.setRate(parseFloat(slider.value)));
+  }
+
+  // sync starting value
+  try{ updateSliderUI(video.playbackRate || 1) }catch(e){ updateSliderUI(1) }
+
+  // when other shortcuts change the rate, listen to 'ratechange' to sync
+  try{ video.addEventListener('ratechange', ()=> updateSliderUI(video.playbackRate)); }catch(e){}
+})(); </script>
+
+
+
+<!-- Global play/pause hotkeys (non-intrusive, no double-toggle) -->
+<script>
+(() => {
+  if (window.__globalPlayHotkeys__) return;
+  window.__globalPlayHotkeys__ = true;
+
+  const playBtn = document.querySelector('.iconbtn[data-act="play"]');
+  const video = document.getElementById('video');
+  if (!playBtn || !video) return;
+
+  const isTypingTarget = (el) => {
+    if (!el) return false;
+    const tag = (el.tagName || '').toUpperCase();
+    // Don't steal keys from interactive controls
+    if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return true;
+    if (el.isContentEditable) return true;
+    return false;
+  };
+
+  const uiBlocked = () => {
+    const ids = ['moreMenu','volPop','ytHelpOverlay'];
+    return ids.some(id => document.getElementById(id)?.classList?.contains('open'));
+  };
+
+  const togglePlay = () => {
+    try {
+      // Prefer existing handler for proper UI/icon sync
+      playBtn.click();
+    } catch (_) {
+      // Fallback: direct control + try to reflect icon if function exists
+      if (video.paused) video.play(); else video.pause();
+      try { window.reflectPlayIcon && window.reflectPlayIcon(); } catch {}
+    }
+  };
+
+  window.addEventListener('keydown', (e) => {
+    if (isTypingTarget(e.target) || uiBlocked()) return;
+
+    const plain = !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey;
+    const key = (e.key || '').toLowerCase();
+
+    // Space or K toggles play/pause
+    if (plain && (e.code === 'Space' || key === 'k')) {
+      e.preventDefault();
+      // Stop other key handlers from also toggling (prevents double-toggle)
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      if (e.stopPropagation) e.stopPropagation();
+      togglePlay();
+      return;
+    }
+
+    // Additional combo: Ctrl + Shift + P
+    if (e.ctrlKey && e.shiftKey && !e.metaKey && !e.altKey && key === 'p') {
+      e.preventDefault();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      if (e.stopPropagation) e.stopPropagation();
+      togglePlay();
+    }
+  }, true); // capture
+})();
+</script>
+
+<!-- injected: tap-to-toggle video -->
+<script>
+// === Tap/Click-to-PlayPause on video (non-invasive) ===
+(function(){ 
+  var videoEl = document.getElementById("video");
+  if (!videoEl) return; // no video element found, do nothing
+
+  // Avoid double-trigger between touchend and click
+  var lastTouchTime = 0;
+
+  function togglePlay(){ 
+    if (videoEl.paused) { videoEl.play(); } else { videoEl.pause(); }
+    // Any existing 'play'/'pause' listeners (e.g., to update UI) will still fire
+  }
+
+  // Touch (mobile)
+  videoEl.addEventListener('touchend', function(e){ 
+    if (e.target !== videoEl) return;
+    lastTouchTime = Date.now();
+    togglePlay();
+  }, { passive: true });
+
+  // Click (desktop) — ignore synthetic click right after touch
+  videoEl.addEventListener('click', function(e){ 
+    if (e.target !== videoEl) return;
+    if (Date.now() - lastTouchTime < 350) return;
+    togglePlay();
+  });
+})();
+</script>
+
+
+
+<!-- injected: video overlay feedback script -->
+<script>
+(function() {
+  var videoEl = document.getElementById('video') || (function(){
+    var vids = document.getElementsByTagName('video');
+    return vids && vids.length ? vids[0] : null;
+  })();
+  if (!videoEl) return;
+
+  function inFullscreenWith(el) {
+    var fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+    if (!fs) return null;
+    // If the fullscreen element is the video or an ancestor/descendant, use fs as container
+    if (fs === el || fs.contains(el) || el.contains(fs)) return fs;
+    return fs; // fallback to fs anyway to stay inside the fullscreen subtree
+  }
+
+  function createOverlay(state) {
+    var fsContainer = inFullscreenWith(videoEl);
+    var overlay = document.createElement('div');
+    overlay.className = 'video-tap-overlay' + (fsContainer ? ' fs' : '');
+
+    var bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    var icon = document.createElement('div');
+    icon.className = 'icon ' + (state === 'play' ? 'play' : 'pause');
+    bubble.appendChild(icon);
+    overlay.appendChild(bubble);
+
+    if (fsContainer) {
+      // When in fullscreen, overlay must live INSIDE the fullscreen subtree
+      fsContainer.appendChild(overlay);
+      // cover the container
+      // (CSS .fs already sets absolute 0/0/100/100)
+    } else {
+      // Non-fullscreen: mimic a HUD at the video's bounding box
+      var rect = videoEl.getBoundingClientRect();
+      overlay.style.position = 'fixed';
+      overlay.style.left = rect.left + 'px';
+      overlay.style.top  = rect.top  + 'px';
+      overlay.style.width  = rect.width + 'px';
+      overlay.style.height = rect.height + 'px';
+      document.body.appendChild(overlay);
+
+      // Keep aligned if the user scrolls during the brief animation
+      var alive = true;
+      function reposition() {
+        if (!alive) return;
+        var r = videoEl.getBoundingClientRect();
+        overlay.style.left = r.left + 'px';
+        overlay.style.top  = r.top  + 'px';
+        overlay.style.width  = r.width + 'px';
+        overlay.style.height = r.height + 'px';
+      }
+      var onScroll = function(){ requestAnimationFrame(reposition); };
+      var onResize = function(){ requestAnimationFrame(reposition); };
+      window.addEventListener('scroll', onScroll, true);
+      window.addEventListener('resize', onResize, true);
+      // Clean up listeners when overlay is removed (below)
+      overlay._cleanup = function() {
+        alive = false;
+        window.removeEventListener('scroll', onScroll, true);
+        window.removeEventListener('resize', onResize, true);
+      };
+    }
+
+    // Remove after ~330ms
+    setTimeout(function() {
+      if (overlay._cleanup) overlay._cleanup();
+      if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 330);
+  }
+
+  var lastState = videoEl.paused ? 'pause' : 'play';
+  function showForCurrentState() {
+    var stateNow = videoEl.paused ? 'pause' : 'play';
+    if (stateNow !== lastState) {
+      lastState = stateNow;
+      createOverlay(stateNow);
+    }
+  }
+  videoEl.addEventListener('play', showForCurrentState);
+  videoEl.addEventListener('pause', showForCurrentState);
+})();
+</script>
+
+
+<script>
+
+(function(){
+  try{
+    const orbCap = document.querySelector('.orb-caption');
+    let freqSpan = document.getElementById('freqHz');
+    if (!freqSpan && orbCap){
+      const sep = document.createTextNode(' • ');
+      freqSpan = document.createElement('span');
+      freqSpan.id = 'freqHz';
+      freqSpan.style.marginLeft = '6px';
+      orbCap.appendChild(sep);
+      orbCap.appendChild(freqSpan);
+    }
+  }catch(e){}
+
+  function hzPerBin(){
+    try { return (window.audioCtx?.sampleRate || 44100) / (window.analyser?.fftSize || 512); }
+    catch { return 44100/512; }
+  }
+  let peakHzSmooth = 0;
+  function smoothPeakHz(nowHz, a = 0.15){
+    peakHzSmooth = peakHzSmooth*(1-a) + nowHz*a;
+    return peakHzSmooth;
+  }
+
+  function ensureAudioContextResume(){
+    try{ window.audioCtx && typeof window.audioCtx.resume === 'function' && window.audioCtx.resume(); }catch{}
+  }
+  document.addEventListener('click', ensureAudioContextResume, {once:true, passive:true});
+  document.addEventListener('touchstart', ensureAudioContextResume, {once:true, passive:true});
+  document.addEventListener('keydown', ensureAudioContextResume, {once:true});
+  try{
+    const v = document.querySelector('video');
+    v && v.addEventListener('play', ensureAudioContextResume, {once:true});
+  }catch{}
+
+  // Expose helpers globally for drawSpectrum
+  window.__orbHzPerBin = hzPerBin;
+  window.__orbSmoothPeak = smoothPeakHz;
+})();
+</script>
+
+<script>
+(function(){
+  const video  = document.getElementById('video');
+  const orb    = document.getElementById('magicOrb');
+  const canvas = document.getElementById('spectrum');
+  if(!video || !orb || !canvas) return;
+
+  // ---------- Audio setup ----------
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = new AC();
+  const analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;                 // finer spectrum
+  analyser.smoothingTimeConstant = 0.75;   // keep some movement
+  analyser.minDecibels = -95;
+  analyser.maxDecibels = -10;
+
+  let mediaSource = null;
+  function ensureGraph(){
+    if(!mediaSource){
+      mediaSource = audioCtx.createMediaElementSource(video);
+      mediaSource.connect(analyser);
+      analyser.connect(audioCtx.destination); // tap only
+    }
+  }
+  function resumeCtx(){ if(audioCtx.state !== 'running'){ audioCtx.resume().catch(()=>{}); } }
+  ['click','touchend','keydown','play'].forEach(e=>window.addEventListener(e,resumeCtx,{passive:true, once:true}));
+
+  // ---------- Canvas HiDPI sizing ----------
+  const ctx = canvas.getContext('2d', { alpha:true });
+  function resize(){
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const wrap = canvas.parentElement;
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    canvas.width  = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  new ResizeObserver(resize).observe(canvas.parentElement);
+  window.addEventListener('orientationchange', resize, {passive:true});
+  resize();
+
+  // ---------- Pro renderer config ----------
+  const bins = analyser.frequencyBinCount;
+  const freqData = new Uint8Array(bins);
+
+  // Visual parameters
+  const BAR_COUNT = 160;            // arcs around ring
+  const FREQ_MIN  = 50;             // Hz
+  const FREQ_MAX  = 16000;          // Hz
+  const STEP      = 1;              // group nearby bins
+  const PEAK_DECAY = 0.012;         // peak fall per frame
+  const EMA = 0.18;                 // per-bar smoothing
+  const AFTERGLOW = 0.09;           // motion persistence (0..1), higher = longer trails
+  const NOISE_GATE_DB = -65;        // below this, fade out
+
+  // Bar state
+  const ema = new Float32Array(BAR_COUNT);
+  const peaks = new Float32Array(BAR_COUNT);
+  const tmp = new Float32Array(BAR_COUNT);
+
+  // Map frequencies to FFT bin indices (log scale)
+  function hzToBin(hz){
+    const nyquist = audioCtx.sampleRate / 2;
+    return Math.max(0, Math.min(bins-1, Math.round(hz / nyquist * bins)));
+  }
+  const binL = hzToBin(FREQ_MIN);
+  const binH = hzToBin(FREQ_MAX);
+  const logL = Math.log(FREQ_MIN);
+  const logH = Math.log(FREQ_MAX);
+
+  // Precompute bar->bin ranges on log scale
+  const ranges = [];
+  for(let i=0;i<BAR_COUNT;i++){
+    const t0 = i / BAR_COUNT;
+    const t1 = (i+1) / BAR_COUNT;
+    const f0 = Math.exp(logL + (logH - logL) * t0);
+    const f1 = Math.exp(logL + (logH - logL) * t1);
+    const b0 = hzToBin(f0);
+    const b1 = Math.max(b0+1, hzToBin(f1));
+    ranges.push([b0,b1]);
+  }
+
+  // ---------- Drawing helpers ----------
+  function dB(vByte){
+    if (vByte <= 0) return -100;
+    // convert 0..255 to roughly 0..1, then to dB
+    const v = vByte / 255;
+    return 20 * Math.log10(v);
+  }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  function drawFrame(){
+    // Motion persistence layer (afterglow): paint a translucent dark veil
+    const {width:w, height:h} = canvas;
+    ctx.fillStyle = `rgba(0,0,0,${AFTERGLOW})`;
+    ctx.fillRect(0,0,w,h);
+
+    // Get spectrum
+    analyser.getByteFrequencyData(freqData);
+
+    // Center and radii
+    const rect = canvas.getBoundingClientRect();
+    const cx = rect.width/2, cy = rect.height/2;
+
+    // Orb-aligned ring
+    const orbW = document.getElementById('magicOrb').getBoundingClientRect().width;
+    const baseR = Math.min(orbW*0.48, Math.min(rect.width, rect.height)*0.42);
+    const maxBar = Math.min(rect.width, rect.height)*0.30;
+
+    // Compute overall loudness to pulse orb
+    let sum = 0;
+    for(let b=binL;b<binH;b++) sum += freqData[b];
+    const energy = sum / ((binH-binL) * 255);
+    const scale = 1 + Math.max(0, energy - 0.02) * 0.08; // mild pulse above floor
+    orb.style.transform = `scale(${scale.toFixed(3)})`;
+
+    // Noise gate
+    const energyDb = 20*Math.log10(Math.max(1e-4, energy));
+    const active = energyDb > NOISE_GATE_DB;
+
+    // Ring aura
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.beginPath();
+    ctx.arc(0,0, baseR*1.04, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(0,255,180, ${active ? (0.15 + energy*0.45) : 0.08})`;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(0,255,200,0.35)';
+    ctx.shadowBlur = 10 + energy*30;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Bar loop (log-frequency mapped)
+    const rot = performance.now() * 0.00006; // subtle drift
+    for(let i=0;i<BAR_COUNT;i++){
+      const [b0,b1] = ranges[i];
+      let maxV = 0;
+      for(let b=b0;b<b1;b+=STEP){
+        maxV = Math.max(maxV, freqData[b]);
+      }
+
+      // Convert to dB-ish scale 0..1
+      const db = dB(maxV);                   // -100..0 (rough)
+      let v = (db - analyser.minDecibels) / (analyser.maxDecibels - analyser.minDecibels);
+      v = Math.max(0, Math.min(1, v));
+
+      // Per-bar EMA smoothing
+      ema[i] = lerp(ema[i], v, EMA);
+      tmp[i] = ema[i];
+
+      // Peak hold w/ decay
+      if (ema[i] > peaks[i]) peaks[i] = ema[i];
+      else peaks[i] = Math.max(0, peaks[i] - PEAK_DECAY);
+    }
+
+    // Draw bars
+    for(let i=0;i<BAR_COUNT;i++){
+      const t = i / BAR_COUNT;
+      const angle = t * Math.PI*2 + rot;
+      const v = tmp[i];
+      const eased = Math.pow(v, 1.8);
+      const L = baseR + eased * maxBar;
+
+      const x1 = Math.cos(angle) * (baseR*0.92);
+      const y1 = Math.sin(angle) * (baseR*0.92);
+      const x2 = Math.cos(angle) * L;
+      const y2 = Math.sin(angle) * L;
+
+      // gradient stroke per bar
+      const gx = Math.cos(angle), gy = Math.sin(angle);
+      const grd = ctx.createLinearGradient(x1,y1,x2,y2);
+      grd.addColorStop(0.00, `rgba(120,255,210, ${0.10 + eased*0.25})`);
+      grd.addColorStop(0.65, `rgba(120,255,255, ${0.25 + eased*0.55})`);
+      grd.addColorStop(1.00, `rgba(255,255,255, ${0.15 + eased*0.35})`);
+
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.lineWidth = 1.8 + eased * 3.2;
+      ctx.strokeStyle = grd;
+      ctx.stroke();
+
+      // Peak cap dot
+      const peakE = Math.pow(peaks[i], 1.8);
+      const pL = baseR + peakE * maxBar;
+      const px = Math.cos(angle) * pL;
+      const py = Math.sin(angle) * pL;
+      ctx.beginPath();
+      ctx.arc(px, py, 1.3 + peakE*3.0, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255, ${0.25 + peakE*0.55})`;
+      ctx.fill();
+    }
+
+    // Inner soft aura
+    const g = ctx.createRadialGradient(0,0, baseR*0.2, 0,0, baseR*1.3);
+    g.addColorStop(0.00, 'rgba(255,255,255,0.60)');
+    g.addColorStop(0.35, 'rgba(100,240,210,0.40)');
+    g.addColorStop(1.00, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = active ? (0.30 + energy*0.25) : 0.18;
+    ctx.beginPath(); ctx.arc(0,0, baseR*1.15, 0, Math.PI*2); ctx.fillStyle = g; ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    requestAnimationFrame(drawFrame);
+  }
+
+  ensureGraph();
+  // Clear background once so afterglow works
+  ctx.fillStyle = 'rgba(0,0,0,1)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  requestAnimationFrame(drawFrame);
+})();
+</script>
+
+
+<script>
+/* Magic Orb Spectrum STUDIO • capsule arcs, auto-gain, log bands, afterglow (non-invasive) */
+(function(){
+  const video  = document.getElementById('video');
+  const orb    = document.getElementById('magicOrb');
+  const canvas = document.getElementById('spectrum');
+  if(!video || !orb || !canvas) return;
+
+  // -------- Audio --------
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const audio = new AC();
+  const analyser = audio.createAnalyser();
+  analyser.fftSize = 2048;
+  analyser.smoothingTimeConstant = 0.78;
+  analyser.minDecibels = -95;
+  analyser.maxDecibels = -10;
+
+  let srcNode = null;
+  function ensureGraph(){
+    if (!srcNode){
+      srcNode = audio.createMediaElementSource(video);
+      srcNode.connect(analyser);
+      analyser.connect(audio.destination);
+    }
+  }
+  function resume(){ if (audio.state !== 'running') audio.resume().catch(()=>{}); }
+  ['click','touchend','keydown','play'].forEach(e=>window.addEventListener(e,resume,{passive:true, once:true}));
+
+  // -------- Canvas (HiDPI) --------
+  const ctx = canvas.getContext('2d', { alpha:true });
+  function resize(){
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const wrap = canvas.parentElement;
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    canvas.width  = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    // static black clear so afterglow fades nicely
+    ctx.fillStyle = 'rgba(0,0,0,1)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+  new ResizeObserver(resize).observe(canvas.parentElement);
+  window.addEventListener('orientationchange', resize, {passive:true});
+  resize();
+
+  // -------- Studio Renderer Config --------
+  const bins = analyser.frequencyBinCount;
+  const data = new Uint8Array(bins);
+
+  // Aesthetics tuned to be comfortable:
+  const BARS = 96;                // fewer, chunkier -> less mỏi mắt
+  const FREQ_MIN = 45;
+  const FREQ_MAX = 15000;
+  const ARC_DEG  = 360 / BARS * 0.78; // shorter arc segments (leave air gaps)
+  const INNER_GAP = 0.06;         // empty space before bars start (relative to orb R)
+  const MAX_OUT = 0.26;           // max outward growth from baseR
+  const GLOW = 18;                // shadow blur
+  const AFTERGLOW = 0.08;         // motion persistence veil
+  const EMA_BAR = 0.22;           // per-bar smoothing
+  const PEAK_DECAY = 0.01;        // peak cap decay
+  const NOISE_GATE_DB = -62;      // fade when very quiet
+  const GAMMA = 1.65;             // perceptual shaping of bar length
+
+  // Auto gain ceiling tracks recent peaks so long tracks don't become too bright
+  let ceiling = 0.55;             // target visual ceiling (0..1)
+  const ceilingRise = 0.06;
+  const ceilingFall = 0.002;
+
+  const ema = new Float32Array(BARS);
+  const peaks = new Float32Array(BARS);
+
+  // Log mapping bands -> FFT bins
+  function hzToBin(hz){ const ny = audio.sampleRate/2; return Math.max(0, Math.min(bins-1, Math.round(hz/ny*bins))); }
+  const binL = hzToBin(FREQ_MIN), binH = hzToBin(FREQ_MAX);
+  const logL = Math.log(FREQ_MIN), logH = Math.log(FREQ_MAX);
+  const ranges = [];
+  for(let i=0;i<BARS;i++){
+    const t0 = i / BARS, t1 = (i+1)/BARS;
+    const f0 = Math.exp(logL + (logH-logL)*t0);
+    const f1 = Math.exp(logL + (logH-logL)*t1);
+    const b0 = hzToBin(f0), b1 = Math.max(b0+1, hzToBin(f1));
+    ranges.push([b0,b1]);
+  }
+
+  function dB(vByte){ if (vByte<=0) return -100; const v=vByte/255; return 20*Math.log10(v); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  function frame(){
+    // Afterglow veil
+    ctx.fillStyle = `rgba(0,0,0,${AFTERGLOW})`;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    analyser.getByteFrequencyData(data);
+
+    const rect = canvas.getBoundingClientRect();
+    const cx = rect.width/2, cy = rect.height/2;
+    const orbW = document.getElementById('magicOrb').getBoundingClientRect().width;
+    const baseR = Math.min(orbW*0.45, Math.min(rect.width, rect.height)*0.40); // leave breathing room
+    const maxBar = Math.min(rect.width, rect.height) * MAX_OUT;
+
+    // global energy
+    let total=0;
+    for(let b=binL;b<binH;b++) total += data[b];
+    const energy = total / ((binH-binL)*255);
+    const scale = 1 + Math.max(0, energy-0.03) * 0.07;
+    orb.style.transform = `scale(${scale.toFixed(3)})`;
+
+    const energyDb = 20*Math.log10(Math.max(1e-4, energy));
+    const active = energyDb > NOISE_GATE_DB;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.lineCap = 'round';
+
+    // Aura ring (soft, subtle)
+    ctx.beginPath();
+    ctx.arc(0,0, baseR*1.02, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(80, 255, 210, ${active ? (0.12 + energy*0.35) : 0.06})`;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(90,255,220,0.35)';
+    ctx.shadowBlur = GLOW;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Bar loop
+    const seg = ARC_DEG * Math.PI/180;
+    const rot = performance.now() * 0.00004;
+    let maxSeen = 0;
+    for(let i=0;i<BARS;i++){
+      const [b0,b1] = ranges[i];
+      let vByte=0;
+      for(let b=b0;b<b1;b++) vByte = Math.max(vByte, data[b]);
+
+      // Normalize and smooth
+      let v = (dB(vByte) - analyser.minDecibels) / (analyser.maxDecibels - analyser.minDecibels);
+      v = Math.max(0, Math.min(1, v));
+      ema[i] = lerp(ema[i], v, EMA_BAR);
+      const vv = Math.pow(ema[i], GAMMA);
+      if (vv > maxSeen) maxSeen = vv;
+
+      // Update peaks (for possible future caps)
+      if (ema[i] > peaks[i]) peaks[i] = ema[i];
+      else peaks[i] = Math.max(0, peaks[i] - PEAK_DECAY);
+    }
+
+    // Auto gain: track running max; compress too-hot visuals
+    if (maxSeen > ceiling) ceiling = lerp(ceiling, maxSeen, ceilingRise);
+    else ceiling = Math.max(0.4, ceiling - ceilingFall);
+    const gain = 0.88 / Math.max(0.45, ceiling);
+
+    for(let i=0;i<BARS;i++){
+      const t = i / BARS;
+      const angle = t * Math.PI*2 + rot;
+      const vv = Math.min(1, Math.pow(ema[i], GAMMA) * gain);
+
+      const len = INNER_GAP*baseR + vv * maxBar; // inner gap keeps center clean
+      const radius = baseR + len * 0.5;
+
+      // gradient stroke on capsule arc
+      const grd = ctx.createLinearGradient(
+        Math.cos(angle)*(radius-len*0.5), Math.sin(angle)*(radius-len*0.5),
+        Math.cos(angle)*(radius+len*0.5), Math.sin(angle)*(radius+len*0.5)
+      );
+      grd.addColorStop(0.00, `rgba(80, 220, 210, ${0.18 + vv*0.12})`);
+      grd.addColorStop(0.55, `rgba(120,255,240, ${0.30 + vv*0.38})`);
+      grd.addColorStop(1.00, `rgba(255,255,255, ${0.12 + vv*0.28})`);
+
+      ctx.beginPath();
+      ctx.arc(0,0, radius, angle - seg/2, angle + seg/2);
+      ctx.lineWidth = Math.max(2, len); // this makes the arc look like a rounded capsule tick
+      ctx.strokeStyle = grd;
+      ctx.stroke();
+    }
+
+    // Inner gentle glow
+    const g = ctx.createRadialGradient(0,0, baseR*0.15, 0,0, baseR*1.1);
+    g.addColorStop(0.00, 'rgba(255,255,255,0.45)');
+    g.addColorStop(0.35, 'rgba(80,255,220,0.28)');
+    g.addColorStop(1.00, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = active ? (0.26 + energy*0.20) : 0.16;
+    ctx.beginPath(); ctx.arc(0,0, baseR*1.05, 0, Math.PI*2); ctx.fillStyle = g; ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.restore();
+    requestAnimationFrame(frame);
+  }
+
+  ensureGraph();
+  requestAnimationFrame(frame);
+})();
+</script>
+
+
+
+<style id="video-title-overlay-css">
+  .video-wrap .vid-title{
+    position:absolute; top:10px; left:12px; z-index:6;
+    color:#fff; font-weight:800;
+    /* Smaller, responsive font for small frames */
+    font-size:clamp(10px, 1.2vw, 14px);
+    line-height:1.3; max-width:min(76%, 560px);
+    padding:4px 8px; border-radius:8px;
+    background:linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.42));
+    text-shadow:0 2px 8px rgba(0,0,0,.6);
+    pointer-events:none; user-select:none;
+  }
+  /* Extra-safe downsizing on small viewports */
+  @media (max-width: 900px){
+    .video-wrap .vid-title{ font-size:clamp(10px, 1.4vw, 13px); }
+  }
+  @media (max-width: 600px){
+    .video-wrap .vid-title{ font-size:12px; padding:3px 6px; }
+  }
+
+  /* Upsize a bit when fullscreen for readability */
+  .video-wrap:fullscreen .vid-title,
+  .video-wrap:-webkit-full-screen .vid-title{
+    font-size:clamp(13px, 1.8vw, 20px);
+    max-width:min(78%, 720px);
+  }
+</style>
+
+
+<script>
+(function(){
+  const video   = document.getElementById('video');
+  const wrapper = document.querySelector('.video-wrap');
+  if(!video || !wrapper) return;
+
+  // Overlay title element
+  let titleEl = document.getElementById('vidTitle');
+  if(!titleEl){
+    titleEl = document.createElement('div');
+    titleEl.id = 'vidTitle';
+    titleEl.className = 'vid-title';
+    wrapper.appendChild(titleEl);
+  }
+  function setTitle(text){
+    titleEl.textContent = text || '';
+    titleEl.style.display = text ? 'block' : 'none';
+  }
+
+  try{
+    const _oldLoadVideo = window.loadVideo;
+    if(typeof _oldLoadVideo === 'function'){
+      window.loadVideo = function(index, autoplay=false){
+        const r = _oldLoadVideo.apply(this, arguments);
+        const activeMeta = document.querySelector('.thumb.active .meta') 
+                        || document.querySelector('.playlist .thumb .meta');
+        setTitle(activeMeta ? activeMeta.textContent.trim() : document.title || '');
+        return r;
+      };
+      setTimeout(()=>{
+        const firstMeta = document.querySelector('.thumb.active .meta') 
+                       || document.querySelector('.playlist .thumb .meta');
+        setTitle(firstMeta ? firstMeta.textContent.trim() : document.title || '');
+      }, 300);
+    }
+  }catch(e){ }
+
+  const autoFS = false;
+  if (autoFS){
+    const onFirstPlay = async ()=>{
+      const container = wrapper;
+      if (!document.fullscreenElement && container?.requestFullscreen){
+        try{ await container.requestFullscreen(); }catch{}
+      }
+      video.removeEventListener('play', onFirstPlay, {once:true});
+    };
+    video.addEventListener('play', onFirstPlay, {once:true});
+  }
+})();
+</script>
+
+
+<!-- ==== BEGIN: Auto-hide fullscreen UI (YouTube-like) ==== -->
+<script>
+(function(){
+  const IDLE_MS = 8000; // 8s
+  let idleTimer = null;
+  let attachedEl = null;
+
+  function isPseudoFS(){
+    return document.body.classList.contains('pfs-active');
+  }
+  function getFSContainer(){
+    const el = document.fullscreenElement || document.webkitFullscreenElement;
+    if (el) {
+      const vw = el.classList?.contains('video-wrap') ? el : el.closest?.('.video-wrap');
+      return vw || el;
+    }
+    if (isPseudoFS()) return document.getElementById('panel');
+    return null;
+  }
+  function setBodyIdleAttr(v){
+    document.body.setAttribute('data-fs-idle', v ? '1' : '0');
+  }
+  function showUI(el){
+    if (!el) return;
+    el.setAttribute('data-fs-idle','0');
+    setBodyIdleAttr(false);
+  }
+  function scheduleHide(el){
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(()=>{
+      el?.setAttribute('data-fs-idle','1');
+      setBodyIdleAttr(true);
+    }, IDLE_MS);
+  }
+  function onActivity(){
+    if (!attachedEl) return;
+    showUI(attachedEl);
+    scheduleHide(attachedEl);
+  }
+  function onLeave(){
+    if (!attachedEl) return;
+    attachedEl.setAttribute('data-fs-idle','1');
+    setBodyIdleAttr(true);
+  }
+  function attach(){
+    const el = getFSContainer();
+    if (!el || attachedEl === el) return;
+    detach();
+    attachedEl = el;
+    document.body.classList.add('fs-active');
+    showUI(attachedEl);
+    scheduleHide(attachedEl);
+    attachedEl.addEventListener('pointermove', onActivity);
+    attachedEl.addEventListener('pointerdown', onActivity);
+    window.addEventListener('keydown', onActivity, { passive: true });
+    attachedEl.addEventListener('mouseleave', onLeave);
+  }
+  function detach(){
+    if (attachedEl) {
+      attachedEl.removeEventListener('pointermove', onActivity);
+      attachedEl.removeEventListener('pointerdown', onActivity);
+      window.removeEventListener('keydown', onActivity);
+      attachedEl.removeEventListener('mouseleave', onLeave);
+      attachedEl.removeAttribute('data-fs-idle');
+      attachedEl = null;
+    }
+    document.body.classList.remove('fs-active');
+    document.body.removeAttribute('data-fs-idle');
+    clearTimeout(idleTimer);
+  }
+  document.addEventListener('fullscreenchange', ()=>{
+    if (document.fullscreenElement || document.webkitFullscreenElement) attach();
+    else detach();
+  });
+  const _origToggleFS = window.toggleFullscreenGlobal;
+  window.toggleFullscreenGlobal = async function(){
+    try { await _origToggleFS?.(); } catch(e) {}
+    setTimeout(()=>{ (isPseudoFS() || document.fullscreenElement || document.webkitFullscreenElement) ? attach() : detach(); }, 0);
+  };
+  if (isPseudoFS() || document.fullscreenElement || document.webkitFullscreenElement) attach();
+})();
+</script>
+<!-- ==== END: Auto-hide fullscreen UI ==== -->
+<script id="assistant-hotkey-pip">
+(() => {
+  const videoEl = document.getElementById('video') || document.querySelector('video');
+  if (!videoEl) return;
+
+  async function togglePiP(){
+    try{
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else if (document.pictureInPictureEnabled) {
+        await videoEl.requestPictureInPicture();
+      } else {
+        (window.showToastSafe || window.showToast || console.log)('PiP không khả dụng');
+      }
+    }catch(e){
+      (window.showToastSafe || window.showToast || console.log)('PiP không khả dụng');
+    }
+    try{
+      const btn = document.querySelector('[data-act="pip"]');
+      btn && (btn.classList.add('hl-gold'), setTimeout(()=>btn.classList.remove('hl-gold'), 600));
+    }catch{}
+  }
+
+  const isTyping = (el) => {
+    if (!el) return false;
+    const t = (el.tagName||'').toUpperCase();
+    return ['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t) || !!el.isContentEditable;
+  };
+
+  // Hotkey: i
+  document.addEventListener('keydown', (e) => {
+    if (e.defaultPrevented) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = (e.key && e.key.length === 1) ? e.key.toLowerCase() : e.key;
+    if (k !== 'i') return;
+    if (isTyping(e.target)) return;
+    e.preventDefault();
+    togglePiP();
+  }, {capture:true});
+
+  // Bổ sung mục vào bảng phím tắt
+  function patchHelpOverlay(){
+    const wrap = document.getElementById('ytHelpOverlay');
+    if (!wrap) return;
+    if (wrap.querySelector('[data-hotkey="pip-i"]')) return;
+    const grid = wrap.querySelector('.grid') || wrap.querySelector('[aria-describedby="helpList"]');
+    if (!grid) return;
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.setAttribute('data-hotkey','pip-i');
+    item.innerHTML = '<div><kbd>I</kbd></div><div>Thu nhỏ video (Picture-in-Picture)</div>';
+    grid.appendChild(item);
+  }
+  document.addEventListener('keydown', (e)=>{ if (e.shiftKey && e.key === '?') setTimeout(patchHelpOverlay, 0); }, {capture:true});
+  setTimeout(patchHelpOverlay, 1200);
+})();
+</script>
+
+<!-- Overlay Title Auto-Update Patch -->
+<script>
+(() => {
+  const video   = document.getElementById('video');
+  const wrapper = document.querySelector('.video-wrap');
+  if (!video || !wrapper) return;
+
+  // Ensure global videos reference (fallback to window.videos or global 'videos')
+  try {
+    if (!window.videos && typeof videos !== 'undefined') window.videos = videos;
+  } catch {}
+
+  // Create overlay if needed
+  let titleEl = document.getElementById('vidTitle');
+  if (!titleEl) {
+    titleEl = document.createElement('div');
+    titleEl.id = 'vidTitle';
+    titleEl.className = 'vid-title';
+    titleEl.style.opacity = '1';
+    titleEl.style.transition = 'opacity .18s ease';
+    wrapper.appendChild(titleEl);
+  }
+
+  // fade-out old → swap text → fade-in new
+  function fadeTitleTo(text) {
+    const newText = (text || '').trim();
+    if (!newText) {
+      titleEl.style.opacity = '0';
+      setTimeout(() => { titleEl.textContent = ''; titleEl.style.display = 'none'; }, 120);
+      return;
+    }
+    titleEl.style.display = 'block';
+    titleEl.style.opacity = '0';
+    setTimeout(() => {
+      titleEl.textContent = newText;
+      requestAnimationFrame(() => { titleEl.style.opacity = '1'; });
+    }, 120);
+  }
+
+  // Hook into existing loadVideo(index, autoplay)
+  function initHook() {
+    if (typeof window.loadVideo !== 'function') return false;
+    if (window.__overlayHooked) return true;
+    const oldLoadVideo = window.loadVideo;
+    window.loadVideo = function(index, autoplay = false) {
+      const ret = oldLoadVideo.apply(this, arguments);
+      try {
+        const arr = Array.isArray(window.videos) ? window.videos : [];
+        const len = arr.length;
+        const i = len ? ((index % len) + len) % len : 0;
+        const t = (arr[i] && arr[i].title) ? arr[i].title : '';
+        fadeTitleTo(t);
+      } catch {}
+      return ret;
+    };
+    window.__overlayHooked = true;
+
+    // Set initial title once playlist is ready
+    setTimeout(() => {
+      const t0 = (window.videos && window.videos[0] && window.videos[0].title) ? window.videos[0].title : (document.title || '');
+      fadeTitleTo(t0);
+    }, 300);
+    return true;
+  }
+
+  // Try immediately, and retry a few times in case scripts load late
+  if (!initHook()) {
+    let tries = 0;
+    const iv = setInterval(() => {
+      tries++;
+      if (initHook() || tries > 20) clearInterval(iv);
+    }, 100);
+  }
+})();
+</script>
+<!-- /Overlay Title Auto-Update Patch -->
+
+
+<!-- Overlay Title Robust Updater (event-driven) -->
+<script>
+(() => {
+  const video = document.getElementById('video');
+  const wrapper = document.querySelector('.video-wrap');
+  if (!video || !wrapper) return;
+
+  // Reuse existing overlay or create once
+  let titleEl = document.getElementById('vidTitle') || document.querySelector('.vid-title');
+  if (!titleEl) {
+    titleEl = document.createElement('div');
+    titleEl.id = 'vidTitle';
+    titleEl.className = 'vid-title';
+    wrapper.appendChild(titleEl);
+  }
+
+  titleEl.style.transition = titleEl.style.transition || 'opacity .18s ease';
+
+  function showTitle(text) {
+    const t = (text || '').trim();
+    if (!t) {
+      titleEl.style.opacity = '0';
+      setTimeout(() => { titleEl.style.display = 'none'; titleEl.textContent = ''; }, 120);
+      return;
+    }
+    titleEl.style.display = 'block';
+    titleEl.style.opacity = '0';
+    setTimeout(() => {
+      titleEl.textContent = t;
+      requestAnimationFrame(() => { titleEl.style.opacity = '1'; });
+    }, 120);
+  }
+
+  // Compute title based on window.videos + current video src / index
+  function computeTitle() {
+    try {
+      const arr = Array.isArray(window.videos) ? window.videos : [];
+      if (typeof window.currentIndex === 'number' && arr[window.currentIndex]?.title) {
+        return arr[window.currentIndex].title;
+      }
+      const curSrcFull = video.currentSrc || (video.querySelector('source')?.src || '');
+      const curFile = (curSrcFull.split('?')[0] || '').split('/').pop();
+      if (curFile) {
+        for (let i = 0; i < arr.length; i++) {
+          const v = arr[i] || {};
+          if (typeof v.src === 'string') {
+            const file = (v.src.split('?')[0] || '').split('/').pop();
+            if (file && (file === curFile || file.endsWith(curFile) || curFile.endsWith(file))) return v.title || '';
+          }
+          if (Array.isArray(v.sources)) {
+            for (const s of v.sources) {
+              const sv = (s && s.src) ? (''+s.src) : '';
+              const f = (sv.split('?')[0] || '').split('/').pop();
+              if (f && (f === curFile || f.endsWith(curFile) || curFile.endsWith(f))) return v.title || '';
+            }
+          }
+        }
+      }
+      const meta = document.querySelector('.thumb.active .meta');
+      if (meta) return meta.textContent.trim();
+    } catch {}
+    return document.title || '';
+  }
+
+  // Update on key events
+  function refreshOverlay() { showTitle(computeTitle()); }
+
+  // When metadata of the video loads (after sources change)
+  video.addEventListener('loadedmetadata', refreshOverlay);
+
+  // Also hook into loadVideo again as a final safety net
+  try {
+    const _old = window.loadVideo;
+    if (typeof _old === 'function') {
+      window.loadVideo = function(index, autoplay=false) {
+        const r = _old.apply(this, arguments);
+        setTimeout(refreshOverlay, 0);
+        return r;
+      };
+    }
+  } catch {}
+
+  // Initial pass
+  setTimeout(refreshOverlay, 300);
+})();
+</script>
+<!-- /Overlay Title Robust Updater (event-driven) -->
+
+</body>
+</html>

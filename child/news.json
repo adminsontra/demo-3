@@ -1,0 +1,60 @@
+{
+  "news": [
+    {
+      "id": "n001",
+      "title": "Một số thủ đoạn lừa đảo mới trên không gian mạng tại Việt Nam và biện pháp phòng ngừa",
+      "category": "canh-bao",
+      "note": "Cảnh báo • 24-11-2024",
+      "desc": "Trước bối cảnh các cuộc tấn công mạng, lừa đảo chiếm đoạt tài sản diễn biến hết sức tinh vi và khó lường trong thời gian, Bộ Tư lệnh 86 (Bộ Quốc phòng)...",
+      "image": "https://naict.tttt.nghean.gov.vn/uploads/news/2025/07/ld1.jpg"
+    },
+    {
+      "id": "n002",
+      "title": "Phần mềm gián điệp mạo danh Tiktok để đánh cấp thông tin",
+      "category": "canh-bao",
+      "note": "Cảnh báo • 01-01-2025",
+      "desc": "Phòng An ninh mạng và phòng chống tội phạm sử dụng công nghệ cao (PA05) Công an Thành phố Hồ Chí Minh phát đi cảnh báo về phần mềm SparkKitty...",
+      "image": "https://naict.tttt.nghean.gov.vn/uploads/news/2025/06/ttok.png"
+    },
+    {
+      "id": "n003",
+      "title": "Cảnh giác chiến dịch lừa đảo tinh vi mới thông qua Facebook",
+      "category": "giao-duc",
+      "note": "Giáo dục • 05-03-2025",
+      "desc": "Các chuyên gia an ninh mạng từ KnowBe4 (Hoa Kỳ) cảnh báo về một chiến dịch lừa đảo mạng tinh vi nhắm vào người dùng Facebook, lợi dụng dịch vụ hợp pháp của Google ...",
+      "image": "https://blog.abit.vn/wp-content/uploads/2020/11/anh-bia-video-fanpage-h.jpg"
+    },
+    {
+      "id": "n004",
+      "title": "Đoạn chat riêng tư của người dùng chatGPT xuất hiện công khai trên Google",
+      "category": "canh-bao",
+      "note": "Cảnh báo • 24-07-2025",
+      "desc": "Theo báo cáo mới đây từ Tạp chí Fast Company (Mỹ) cho biết rằng, chỉ cần sử dụng một đoạn tìm kiếm đơn giản, người dùng có thể thấy gần 4.500 đoạn hội thoại với ChatGPT ...",
+      "image": "https://naict.tttt.nghean.gov.vn/uploads/news/2025/08/google-ai.jpg"
+    },
+    {
+      "id": "n005",
+      "title": "Kỹ năng bảo mật, an toàn thông tin cho học sinh",
+      "category": "giao-duc",
+      "note": "Nâng cao ý thức • 02-09-2025",
+      "desc": "Việc trang bị kiến thức, kỹ năng phù hợp theo từng lứa tuổi để các em nhỏ tự bảo vệ mình trên môi trường mạng, kỹ năng bảo mật thông tin, tránh nguy cơ mất an toàn thông tin ...",
+      "image": "https://duhocbluesea.edu.vn/wp-content/uploads/2024/03/nganh_an_ninh_mang-1.jpg"
+    },
+    {
+      "id": "n006",
+      "title": "Kỹ năng an toàn thông tin qua giao dục cao học",
+      "category": "giao-duc",
+      "note": "Nâng cao ý thức • 06-09-2025",
+      "desc": "Trong thế giới kỹ thuật số ngày nay, an toàn thông tin đã trở thành một trong những mối quan tâm hàng đầu không chỉ đối với các tổ chức, doanh nghiệp mà còn đối với mỗi cá nhân...",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0MtLmCc_MB-1xybrnlXkpwZjVCpo_bIWzSg&s"
+    },
+    {
+      "id": "n007",
+      "title": "Ứng dụng kiểm tra tuổi để bảo vệ trẻ em trên không gian mạng",
+      "category": "giao-duc",
+      "note": "Nâng cao ý thức thử nghiệm • 07-09-2025",
+      "desc": "Gỡ tiện ích lạ, kiểm tra mức dùng CPU bất thường.",
+      "image": "https://dulieu.antoanthongtin.gov.vn/tapchiantoanthongtin/f7f80318-57ad-4051-877d-dbc76443dfac/10(454).jpg"
+    }
+  ]
+}
