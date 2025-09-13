@@ -1405,55 +1405,55 @@ function initBackToTop() {
     } catch (_) {}
     initVideo();
     makeGallery("galOnline", [
-      { src: "../library/picture (1).jpg", title: "Sự kiện trực tuyến 1" },
+      { src: "./library/picture (1).jpg", title: "Sự kiện trực tuyến 1" },
       {
-        src: "../library/picture (1).png",
+        src: "./library/picture (1).png",
         title: "Sự kiện trực tuyến 2",
       },
       {
-        src: "../library/picture (3).png",
+        src: "./library/picture (3).png",
         title: "Sự kiện trực tuyến 3",
       },
       {
-        src: "../library/picture (9).jpg",
+        src: "./library/picture (9).jpg",
         title: "Sự kiện trực tuyến 4",
       },
       {
-        src: "../library/picture (11).jpg",
+        src: "./library/picture (11).jpg",
         title: "Sự kiện trực tuyến 5",
       },
       {
-        src: "../library/picture (12).jpg",
+        src: "./library/picture (12).jpg",
         title: "Sự kiện trực tuyến 6",
       },
       {
-        src: "../library/picture (13).jpg",
+        src: "./library/picture (13).jpg",
         title: "Sự kiện trực tuyến 7",
       },
     ]);
 
     makeGallery("galHDTT", [
-      { src: "../HĐTT/1.jpg", title: "Hoạt động trải nghiệm 1" },
-      { src: "../HĐTT/2.jpg", title: "Hoạt động trải nghiệm 2" },
-      { src: "../HĐTT/3.jpg", title: "Hoạt động trải nghiệm 3" },
-      { src: "../HĐTT/4.jpg", title: "Hoạt động trải nghiệm 4" },
-      { src: "../HĐTT/5.jpg", title: "Hoạt động trải nghiệm 5" },
-      { src: "../HĐTT/6.jpg", title: "Hoạt động trải nghiệm 6" },
-      { src: "../HĐTT/7.jpg", title: "Hoạt động trải nghiệm 7" },
-      { src: "../HĐTT/8.jpg", title: "Hoạt động trải nghiệm 8" },
-      { src: "../HĐTT/9%20(1).jpg", title: "Hoạt động trải nghiệm 9" },
-      { src: "../HĐTT/9%20(2).jpg", title: "Hoạt động trải nghiệm 10" },
-      { src: "../HĐTT/9%20(4).jpg", title: "Hoạt động trải nghiệm 11" },
-      { src: "../HĐTT/10.jpg", title: "Hoạt động trải nghiệm 12" },
+      { src: "./HĐTT/1.jpg", title: "Hoạt động trải nghiệm 1" },
+      { src: "./HĐTT/2.jpg", title: "Hoạt động trải nghiệm 2" },
+      { src: "./HĐTT/3.jpg", title: "Hoạt động trải nghiệm 3" },
+      { src: "./HĐTT/4.jpg", title: "Hoạt động trải nghiệm 4" },
+      { src: "./HĐTT/5.jpg", title: "Hoạt động trải nghiệm 5" },
+      { src: "./HĐTT/6.jpg", title: "Hoạt động trải nghiệm 6" },
+      { src: "./HĐTT/7.jpg", title: "Hoạt động trải nghiệm 7" },
+      { src: "./HĐTT/8.jpg", title: "Hoạt động trải nghiệm 8" },
+      { src: "./HĐTT/9%20(1).jpg", title: "Hoạt động trải nghiệm 9" },
+      { src: "./HĐTT/9%20(2).jpg", title: "Hoạt động trải nghiệm 10" },
+      { src: "./HĐTT/9%20(4).jpg", title: "Hoạt động trải nghiệm 11" },
+      { src: "./HĐTT/10.jpg", title: "Hoạt động trải nghiệm 12" },
     ]);
 
     makeGallery("galCLB", [
-      { src: "../CLB/1.jpg", title: "Hoạt động 1" },
-      { src: "../CLB/2.jpg", title: "Hoạt động 2" },
-      { src: "../CLB/3.jpg", title: "Hoạt động 3" },
-      { src: "../CLB/4.jpg", title: "Hoạt động 4" },
-      { src: "../CLB/5.jpg", title: "Hoạt động 5" },
-      { src: "../CLB/6.jpg", title: "Hoạt động 6" },
+      { src: "./CLB/1.jpg", title: "Hoạt động 1" },
+      { src: "./CLB/2.jpg", title: "Hoạt động 2" },
+      { src: "./CLB/3.jpg", title: "Hoạt động 3" },
+      { src: "./CLB/4.jpg", title: "Hoạt động 4" },
+      { src: "./CLB/5.jpg", title: "Hoạt động 5" },
+      { src: "./CLB/6.jpg", title: "Hoạt động 6" },
     ]);
   });
 })();
