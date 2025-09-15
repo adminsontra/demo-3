@@ -37,7 +37,7 @@
 
 * {
   box-sizing: border-box;
-  font-family: "Merriweather", "Noto Serif", Georgia, serif;
+  font-family: "Merriweather", "Noto Serif", "Georgia", "serif";
 }
 html,
 body {
